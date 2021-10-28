@@ -26,6 +26,14 @@ def read_loan_train():
 
     df.to_csv('./preprocessing/loan_train.csv', sep=';')
 
+    df = pd.read_csv('./docs/loan_test.csv', usecols=["loan_id", "account_id",
+        "date", "amount", "duration", "payments", "status"], sep=';')
+
+    # Split Date into year, month and day
+    split_date("loan_year", "loan_month", "loan_day", "date", df)
+
+    df.to_csv('./preprocessing/loan_test.csv', sep=';')
+
 
 def read_card_train():
     df = pd.read_csv("./docs/card_train.csv", sep=';')
