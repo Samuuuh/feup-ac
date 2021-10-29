@@ -24,8 +24,16 @@ def preprocess(file_name: str, parse_function: Callable[[pd.DataFrame], [pd.Data
 def split_date(name_year: str, name_month: str, name_day: str, column_name: str, df: pd.DataFrame) -> None:
     df[[name_year, name_month, name_day]] = [list(map(''.join, zip(*[iter(str(date))] * 2))) for date in
                                              df[column_name]]
+    df[name_year] = df[name_year].astype('int') + 1900
+    df[name_month] = df[name_month].astype('int')
+    df[name_day] = df[name_day].astype('int')
     del df[column_name]
 
+
+def join_date(name_year: str, name_month: str, name_day: str, column_name: str, df: pd.DataFrame) -> None:
+    df[column_name] = (df[name_year].astype('str') + '-' + df[name_month].astype('str') + '-' +
+                       df[name_day].astype('str'))
+    df[column_name] = pd.to_datetime(df[column_name])
 
 def read_account():
     df = read_csv("account", ["account_id", "district_id", "frequency", "date"])
@@ -105,9 +113,7 @@ def read_client() -> None:
         df.loc[df.sex == 'f', "birthdate_month"] = df.birthdate_month - 50
 
         # Creating a birthdate column as a datetime
-        df["birthdate"] = (df.birthdate_year.astype('str') + '-' + df.birthdate_month.astype('str') + '-' +
-                           df.birthdate_day.astype('str'))
-        df.birthdate = pd.to_datetime(df.birthdate)
+        join_date("birthdate_year", "birthdate_month", "birthdate_day", "birthdate", df)
 
         # Removing the now useless column birth_number
         return df.drop(columns=["birth_number"])
@@ -117,7 +123,9 @@ def read_client() -> None:
 
 def read_disposition() -> None:
     def parse_data(df: pd.DataFrame) -> pd.DataFrame:
-        df.type = np.where(df.type == "OWNER", 'o', 'd')
+        # Changing the types to be in small letters like the other categorical attributes that are not codes
+        df.type = np.where(df.type == "OWNER", 'owner', 'disponent')
+
         return df
 
     preprocess("disp", parse_data)
@@ -125,18 +133,35 @@ def read_disposition() -> None:
 
 def read_transaction() -> None:
     def parse_data(df: pd.DataFrame) -> pd.DataFrame:
-        print(df)
+        # Create a column for each date segment and creating a date attribute
+        split_date("trans_year", "trans_month", "trans_day", "date", df)
+        join_date("trans_year", "trans_month", "trans_day", "trans_date", df)
+
+        # Removing information about the operation from the type
+        df.loc[df.type == 'withdrawal in cash', "type"] = 'withdrawal'
+
+        # Removing information about the type from the operation
+        # obs: all transactions that have null operations are of the credit type
+        conditions = [df.operation == 'credit in cash', df.operation == 'withdrawal in cash',
+                      df.operation == 'collection from another bank', df.operation == 'remittance to another bank',
+                      df.operation == 'credit card withdrawal', df.operation.isna()]
+        values = ['cash', 'cash', 'another bank', 'another bank', 'credit card', NaN]
+        df.operation = np.select(conditions, values)
+
+        # Joining the empty k_symbol with the NaN
+        df.loc[df.k_symbol == ' ', "k_symbol"] = NaN
+
         return df
 
     preprocess("trans_train", parse_data)
-    # preprocess("trans_test", parse_data)
+    preprocess("trans_test", parse_data)
 
 
 if __name__ == "__main__":
-    # read_account()
-    # read_card_train()
-    # read_client()
-    # read_disposition()
-    # read_district()
-    # read_loan_train()
+    read_account()
+    read_card_train()
+    read_client()
+    read_disposition()
+    read_district()
+    read_loan_train()
     read_transaction()
