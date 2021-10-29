@@ -39,6 +39,7 @@ def preprocess(file_name: str, parse_function: Callable[[pd.DataFrame], [pd.Data
 def read_account() -> None:
     def parse_data(df: pd.DataFrame) -> pd.DataFrame:
         split_date("creation_year", "creation_month", "creation_day", "date", df)
+        join_date("creation_year", "creation_month", "creation_day", "creation_date", df)
         return df
 
     preprocess("account", parse_data, index=True)
@@ -47,6 +48,7 @@ def read_account() -> None:
 def read_card() -> None:
     def parse_data(df: pd.DataFrame) -> pd.DataFrame:
         split_date("issued_year", "issued_month", "issued_day", "issued", df)
+        join_date("issued_year", "issued_month", "issued_day", "issued_date", df)
         return df
 
     preprocess("card_train", parse_data)
@@ -121,6 +123,7 @@ def read_district() -> None:
 def read_loan() -> None:
     def parse_data(df: pd.DataFrame) -> pd.DataFrame:
         split_date("loan_year", "loan_month", "loan_day", "date", df)
+        join_date("loan_year", "loan_month", "loan_day", "loan_date", df)
         return df
 
     preprocess("loan_train", parse_data, index=True)
