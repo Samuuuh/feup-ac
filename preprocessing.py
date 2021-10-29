@@ -14,6 +14,12 @@ def write_csv(df: pd.DataFrame, file: str, index: bool = True):
     return df.to_csv('./preprocessing/' + file + '.csv', sep=';', index=index)
 
 
+def preprocess(file_name: str, parse_function):
+    df = read_csv(file_name)
+    df = parse_function(df)
+    write_csv(df, file_name, index=False)
+
+
 def split_date(name_year: str, name_month: str, name_day: str, column_name: str, df: pd.DataFrame) -> None:
     df[[name_year, name_month, name_day]] = [list(map(''.join, zip(*[iter(str(date))] * 2))) for date in
                                              df[column_name]]
@@ -105,9 +111,7 @@ def read_client():
         # Removing the now useless column birth_number
         return df.drop(columns=["birth_number"])
 
-    clients = read_csv("client")
-    clients = parse_data(clients)
-    write_csv(clients, "client", index=False)
+    preprocess("client", parse_data)
 
 
 def read_disposition():
@@ -115,15 +119,22 @@ def read_disposition():
         df.type = np.where(df.type == "OWNER", 'o', 'd')
         return df
 
-    dispositions = read_csv("disp")
-    dispositions = parse_data(dispositions)
-    write_csv(dispositions, "disp", index=False)
+    preprocess("disp", parse_data)
+
+
+def read_transaction():
+    def parse_data(df: pd.DataFrame):
+        return df
+
+    preprocess("trans_train", parse_data)
+    preprocess("trans_test", parse_data)
 
 
 if __name__ == "__main__":
     read_account()
+    read_card_train()
     read_client()
     read_disposition()
     read_district()
     read_loan_train()
-    read_card_train()
+    read_transaction()
