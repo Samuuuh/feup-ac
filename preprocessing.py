@@ -2,51 +2,57 @@ from numpy import NaN
 import numpy as np
 import pandas as pd
 
-def read_csv(file):
+
+def read_csv(file: str, columns: list = None):
     # loads the dataset stored in the .csv file to a variable
-    return pd.read_csv('docs/' + file + '.csv', low_memory=False, sep=";")
+    if columns is None:
+        return pd.read_csv('docs/' + file + '.csv', low_memory=False, sep=";")
+    return pd.read_csv('docs/' + file + '.csv', usecols=columns, low_memory=False, sep=";")
+
+
+def write_csv(df: pd.DataFrame, file: str, index: bool = True):
+    return df.to_csv('./preprocessing/' + file + '.csv', sep=';', index=index)
+
 
 def split_date(name_year: str, name_month: str, name_day: str, column_name: str, df: pd.DataFrame) -> None:
-    df[[name_year, name_month, name_day]] = [list(map(''.join, zip(*[iter(str(date))] * 2))) for date in df[column_name]]
+    df[[name_year, name_month, name_day]] = [list(map(''.join, zip(*[iter(str(date))] * 2))) for date in
+                                             df[column_name]]
     del df[column_name]
 
 
 def read_account():
-    df = pd.read_csv('./docs/account.csv', usecols=["account_id", "district_id",
-        "frequency", "date"], sep=';')
+    df = read_csv("account", ["account_id", "district_id", "frequency", "date"])
 
     # Split Date into year, month and day
     split_date("creation_year", "creation_month", "creation_day", "date", df)
 
-    df.to_csv('./preprocessing/account.csv', sep=';')
+    write_csv(df, "account")
 
 
 def read_loan_train():
-    df = pd.read_csv('./docs/loan_train.csv', usecols=["loan_id", "account_id",
-        "date", "amount", "duration", "payments", "status"], sep=';')
+    df = read_csv("loan_train", ["loan_id", "account_id", "date", "amount", "duration", "payments", "status"])
 
     # Split Date into year, month and day
     split_date("loan_year", "loan_month", "loan_day", "date", df)
 
-    df.to_csv('./preprocessing/loan_train.csv', sep=';')
+    write_csv(df, "loan_train")
 
-    df = pd.read_csv('./docs/loan_test.csv', usecols=["loan_id", "account_id",
-        "date", "amount", "duration", "payments", "status"], sep=';')
+    df = read_csv("loan_test", ["loan_id", "account_id", "date", "amount", "duration", "payments", "status"])
 
     # Split Date into year, month and day
     split_date("loan_year", "loan_month", "loan_day", "date", df)
 
-    df.to_csv('./preprocessing/loan_test.csv', sep=';')
+    write_csv(df, "loan_test")
 
 
 def read_card_train():
-    df = pd.read_csv("./docs/card_train.csv", sep=';')
+    df = read_csv("card_train")
     split_date("issued_year", "issued_month", "issued_day", "issued", df)
-    df.to_csv("./preprocessing/card_train.csv", sep=";", index=False)
+    write_csv(df, "card_train", index=False)
 
 
 def read_district():
-    df = pd.read_csv("./docs/district.csv", sep=';')
+    df = read_csv("district")
 
     # Region direction and Region
     df['region_direction'] = df['region'].apply(lambda x: x.split(" ")[0] if x.find(" ") != -1 else pd.NA)
@@ -57,7 +63,7 @@ def read_district():
     df['city'] = df['name'].apply(lambda x: x.split(" - ")[0] if x.find(" - ") != -1 else x)
 
     del df['name']
-    del df['city_area']    # Not much information after analysis.
+    del df['city_area']  # Not much information after analysis.
 
     df = df.rename({
         'no. of inhabitants': 'num_inhab',
@@ -74,33 +80,39 @@ def read_district():
         'no. of municipalities with inhabitants 500-1999': 'num_municip_inhab_500_1999',
         'no. of municipalities with inhabitants 2000-9999 ': 'num_municip_inhab_2000_9999',
         'no. of municipalities with inhabitants >10000 ': 'num_municip_inhab_10000_'
-        }, axis=1)
-    df.to_csv("./preprocessing/district.csv", index=False, sep=";")
+    }, axis=1)
 
-def parse_clients():
-    # The client data is saved in the "client.csv" file
-    dataframe = read_csv("client")
+    write_csv(df, "district", index=False)
 
-    # Separating the birth number into day, month and year
-    dataframe.birth_number = dataframe.birth_number.astype('str')
-    dataframe["birthdate_year"] = 1900 + dataframe.birth_number.str[:2].astype('int')
-    dataframe["birthdate_month"] = dataframe.birth_number.str[2:4].astype('int')
-    dataframe["birthdate_day"] = dataframe.birth_number.str[4:].astype('int')
 
-    # The month was added by 50 for women, we are going to revert that and add a sex attribute
-    dataframe["sex"] = np.where(dataframe.birthdate_month > 12, 'f', 'm')
-    dataframe.loc[dataframe.sex == 'f', "birthdate_month"] = dataframe.birthdate_month - 50
+def read_client():
+    def parse_data(df: pd.DataFrame):
+        # Separating the birth number into day, month and year
+        df.birth_number = df.birth_number.astype('str')
+        df["birthdate_year"] = 1900 + df.birth_number.str[:2].astype('int')
+        df["birthdate_month"] = df.birth_number.str[2:4].astype('int')
+        df["birthdate_day"] = df.birth_number.str[4:].astype('int')
 
-    # Creating a birthdate column as a datetime
-    dataframe["birthdate"] = (dataframe.birthdate_year.astype('str') + '-' +
-                              dataframe.birthdate_month.astype('str') + '-' + dataframe.birthdate_day.astype('str'))
-    dataframe.birthdate = pd.to_datetime(dataframe.birthdate)
+        # The month was added by 50 for women, we are going to revert that and add a sex attribute
+        df["sex"] = np.where(df.birthdate_month > 12, 'f', 'm')
+        df.loc[df.sex == 'f', "birthdate_month"] = df.birthdate_month - 50
 
-    # Returning the dataframe without the now useless column birth_number
-    return dataframe.drop(columns=["birth_number"])
+        # Creating a birthdate column as a datetime
+        df["birthdate"] = (df.birthdate_year.astype('str') + '-' + df.birthdate_month.astype('str') + '-' +
+                           df.birthdate_day.astype('str'))
+        df.birthdate = pd.to_datetime(df.birthdate)
+
+        # Removing the now useless column birth_number
+        return df.drop(columns=["birth_number"])
+
+    clients = read_csv("client")
+    clients = parse_data(clients)
+    write_csv(clients, "client", index=False)
+
 
 if __name__ == "__main__":
     read_account()
     read_loan_train()
     read_card_train()
     read_district()
+    read_client()
