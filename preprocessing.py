@@ -110,9 +110,20 @@ def read_client():
     write_csv(clients, "client", index=False)
 
 
+def read_disposition():
+    def parse_data(df: pd.DataFrame):
+        df.type = np.where(df.type == "OWNER", 'o', 'd')
+        return df
+
+    dispositions = read_csv("disp")
+    dispositions = parse_data(dispositions)
+    write_csv(dispositions, "disp", index=False)
+
+
 if __name__ == "__main__":
     read_account()
+    read_client()
+    read_disposition()
+    read_district()
     read_loan_train()
     read_card_train()
-    read_district()
-    read_client()
