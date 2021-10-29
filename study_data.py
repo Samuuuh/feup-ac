@@ -2,7 +2,7 @@
 from os import defpath
 from matplotlib import pyplot as plt
 import pandas as pd
-import seaborn as sns
+import numpy as np
 
 
 df_loan = pd.read_csv("./preprocessing/loan_train.csv", sep=";")
@@ -24,18 +24,20 @@ def show_head_tail(df: pd.DataFrame) -> None:
     print(df.tail())
 
 
-def show_corr_matrix(corr):
-    ax = sns.heatmap(
-        corr,
-        vmin=-1, vmax=1, center=0,
-        cmap=sns.diverging_palette(20, 220, n=200),
-        square=True,
-    )
-    ax.set_xticklabels(
-        ax.get_xticklabels(),
-        rotation=45,
-        horizontalalignment='right'
-    )
+def show_corr_matrix(data):
+
+    corr = data.corr()
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    cax = ax.matshow(corr, cmap='coolwarm', vmin=-1, vmax=1)
+    fig.colorbar(cax)
+    ticks = np.arange(0, len(data.columns), 1)
+    ax.set_xticks(ticks)
+    plt.xticks(rotation=90)
+    ax.set_yticks(ticks)
+    ax.set_xticklabels(data.columns)
+    ax.set_yticklabels(data.columns)
+    plt.show()
 
 
 def study_district():
@@ -68,13 +70,13 @@ def corrlation_with_status():
     print("== CORRELATION WITH STATUS (LOAN AND CARD)")
     df_loan_card = df_loan.join(df_card, how='inner')
     print(df_loan_card.corrwith(df_loan_card['status']))
-    show_corr_matrix(df_loan_card.corr())
+    show_corr_matrix(df_loan_card)
     # print(df_loan_card.corr())
 
     print("\n== CORRELATION WITH STATUS (LOAN AND CARD)")
     df_loan_acct = df_loan.join(df_acct, how='inner', on='account_id', rsuffix='acct')
     print(df_loan_acct.corrwith(df_loan_acct['status']))
-    show_corr_matrix(df_loan_acct.corr())
+    show_corr_matrix(df_loan_acct)
 
 
 if __name__ == '__main__':
