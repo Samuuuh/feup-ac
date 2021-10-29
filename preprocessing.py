@@ -1,20 +1,21 @@
 from numpy import NaN
+from collections.abc import Callable
 import numpy as np
 import pandas as pd
 
 
-def read_csv(file: str, columns: list = None):
+def read_csv(file: str, columns: list = None) -> pd.DataFrame:
     # loads the dataset stored in the .csv file to a variable
     if columns is None:
         return pd.read_csv('docs/' + file + '.csv', low_memory=False, sep=";")
     return pd.read_csv('docs/' + file + '.csv', usecols=columns, low_memory=False, sep=";")
 
 
-def write_csv(df: pd.DataFrame, file: str, index: bool = True):
+def write_csv(df: pd.DataFrame, file: str, index: bool = True) -> str:
     return df.to_csv('./preprocessing/' + file + '.csv', sep=';', index=index)
 
 
-def preprocess(file_name: str, parse_function):
+def preprocess(file_name: str, parse_function: Callable[[pd.DataFrame], [pd.DataFrame]]):
     df = read_csv(file_name)
     df = parse_function(df)
     write_csv(df, file_name, index=False)
@@ -91,8 +92,8 @@ def read_district():
     write_csv(df, "district", index=False)
 
 
-def read_client():
-    def parse_data(df: pd.DataFrame):
+def read_client() -> None:
+    def parse_data(df: pd.DataFrame) -> pd.DataFrame:
         # Separating the birth number into day, month and year
         df.birth_number = df.birth_number.astype('str')
         df["birthdate_year"] = 1900 + df.birth_number.str[:2].astype('int')
@@ -114,27 +115,28 @@ def read_client():
     preprocess("client", parse_data)
 
 
-def read_disposition():
-    def parse_data(df: pd.DataFrame):
+def read_disposition() -> None:
+    def parse_data(df: pd.DataFrame) -> pd.DataFrame:
         df.type = np.where(df.type == "OWNER", 'o', 'd')
         return df
 
     preprocess("disp", parse_data)
 
 
-def read_transaction():
-    def parse_data(df: pd.DataFrame):
+def read_transaction() -> None:
+    def parse_data(df: pd.DataFrame) -> pd.DataFrame:
+        print(df)
         return df
 
     preprocess("trans_train", parse_data)
-    preprocess("trans_test", parse_data)
+    # preprocess("trans_test", parse_data)
 
 
 if __name__ == "__main__":
-    read_account()
-    read_card_train()
-    read_client()
-    read_disposition()
-    read_district()
-    read_loan_train()
+    # read_account()
+    # read_card_train()
+    # read_client()
+    # read_disposition()
+    # read_district()
+    # read_loan_train()
     read_transaction()
