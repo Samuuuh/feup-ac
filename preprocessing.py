@@ -15,13 +15,17 @@ def write_csv(df: pd.DataFrame, file: str, index: bool = True) -> str:
     return df.to_csv('./preprocessing/' + file + '.csv', sep=';', index=index)
 
 
-def split_date(name_year: str, name_month: str, name_day: str, column_name: str, df: pd.DataFrame) -> None:
+def split_date(name_year: str, name_month: str, name_day: str, column_name: str, df: pd.DataFrame,
+               new_column_name: str = None) -> None:
     df[[name_year, name_month, name_day]] = [list(map(''.join, zip(*[iter(str(date))] * 2))) for date in
                                              df[column_name]]
     df[name_year] = df[name_year].astype('int') + 1900
     df[name_month] = df[name_month].astype('int')
     df[name_day] = df[name_day].astype('int')
     del df[column_name]
+
+    if new_column_name is not None:
+        join_date(name_year, name_month, name_day, new_column_name, df)
 
 
 def join_date(name_year: str, name_month: str, name_day: str, column_name: str, df: pd.DataFrame) -> None:
@@ -38,8 +42,7 @@ def preprocess(file_name: str, parse_function: Callable[[pd.DataFrame], [pd.Data
 
 def read_account() -> None:
     def parse_data(df: pd.DataFrame) -> pd.DataFrame:
-        split_date("creation_year", "creation_month", "creation_day", "date", df)
-        join_date("creation_year", "creation_month", "creation_day", "creation_date", df)
+        split_date("creation_year", "creation_month", "creation_day", "date", df, "creation_date")
         return df
 
     preprocess("account", parse_data, index=True)
@@ -47,8 +50,7 @@ def read_account() -> None:
 
 def read_card() -> None:
     def parse_data(df: pd.DataFrame) -> pd.DataFrame:
-        split_date("issued_year", "issued_month", "issued_day", "issued", df)
-        join_date("issued_year", "issued_month", "issued_day", "issued_date", df)
+        split_date("issued_year", "issued_month", "issued_day", "issued", df, "issued_date")
         return df
 
     preprocess("card_train", parse_data)
@@ -122,8 +124,7 @@ def read_district() -> None:
 
 def read_loan() -> None:
     def parse_data(df: pd.DataFrame) -> pd.DataFrame:
-        split_date("loan_year", "loan_month", "loan_day", "date", df)
-        join_date("loan_year", "loan_month", "loan_day", "loan_date", df)
+        split_date("loan_year", "loan_month", "loan_day", "date", df, "loan_date")
         return df
 
     preprocess("loan_train", parse_data, index=True)
@@ -133,8 +134,7 @@ def read_loan() -> None:
 def read_transaction() -> None:
     def parse_data(df: pd.DataFrame) -> pd.DataFrame:
         # Create a column for each date segment and creating a date attribute
-        split_date("trans_year", "trans_month", "trans_day", "date", df)
-        join_date("trans_year", "trans_month", "trans_day", "trans_date", df)
+        split_date("trans_year", "trans_month", "trans_day", "date", df, "trans_date")
 
         # Removing information about the operation from the type
         df.loc[df.type == 'withdrawal in cash', "type"] = 'withdrawal'
