@@ -1,5 +1,5 @@
 id;region;num_inhab;num_municip_inhab_0_499;num_municip_inhab_500_1999;num_municip_inhab_2000_9999;num_municip_inhab_10000_;num_cities;perc_urban_inhab;avg_salary;perc_unemploy_95;perc_unemploy_96;enterp_per_1000;num_crimes_95;num_crimes_96;region_direction;city
-1;Prague;1204953;0;0;0;1;1;100.0;12541;0.29;0.43;167;85677;99107;;Hl.m. Praha
+1;Prague;1204953;0;0;0;1;1;100.0;12541;0.29;0.43;167;85677;99107;central;Hl.m. Praha
 2;Bohemia;88884;80;26;6;2;5;46.7;8507;1.67;1.85;132;2159;2674;central;Benesov
 3;Bohemia;75232;55;26;4;1;5;41.7;8980;1.95;2.21;111;2824;2813;central;Beroun
 4;Bohemia;149893;63;29;6;2;6;67.4;9753;4.64;5.05;109;5244;5892;central;Kladno

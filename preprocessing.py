@@ -14,7 +14,7 @@ def read_account():
     # Split Date into year, month and day
     split_date("creation_year", "creation_month", "creation_day", "date", df)
 
-    df.to_csv('./preprocessing/account.csv', sep=';')
+    df.to_csv('./preprocessing/account.csv', sep=';', index=False)
 
 
 def read_loan_train():
@@ -24,7 +24,7 @@ def read_loan_train():
     # Split Date into year, month and day
     split_date("loan_year", "loan_month", "loan_day", "date", df)
 
-    df.to_csv('./preprocessing/loan_train.csv', sep=';')
+    df.to_csv('./preprocessing/loan_train.csv', sep=';', index=False)
 
     df = pd.read_csv('./docs/loan_test.csv', usecols=["loan_id", "account_id",
         "date", "amount", "duration", "payments", "status"], sep=';')
@@ -32,7 +32,7 @@ def read_loan_train():
     # Split Date into year, month and day
     split_date("loan_year", "loan_month", "loan_day", "date", df)
 
-    df.to_csv('./preprocessing/loan_test.csv', sep=';')
+    df.to_csv('./preprocessing/loan_test.csv', sep=';', index=False)
 
 
 def read_card_train():
@@ -47,6 +47,7 @@ def read_district():
     # Region direction and Region
     df['region_direction'] = df['region'].apply(lambda x: x.split(" ")[0] if x.find(" ") != -1 else pd.NA)
     df['region'] = df['region'].apply(lambda x: x.split(" ")[1] if x.find(" ") != -1 else x)
+    df['region_direction'] = df['region_direction'].fillna("central")
 
     # Split name
     df['city_area'] = df['name'].apply(lambda x: x.split(" - ")[1] if x.find(" - ") != -1 else pd.NA)
