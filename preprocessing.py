@@ -15,13 +15,8 @@ def write_csv(df: pd.DataFrame, file: str, index: bool = True) -> str:
     return df.to_csv('./preprocessing/' + file + '.csv', sep=';', index=index)
 
 
-def preprocess(file_name: str, parse_function: Callable[[pd.DataFrame], [pd.DataFrame]]):
-    df = read_csv(file_name)
-    df = parse_function(df)
-    write_csv(df, file_name, index=False)
-
-
-def split_date(name_year: str, name_month: str, name_day: str, column_name: str, df: pd.DataFrame) -> None:
+def split_date(name_year: str, name_month: str, name_day: str, column_name: str, df: pd.DataFrame,
+               new_column_name: str = None) -> None:
     df[[name_year, name_month, name_day]] = [list(map(''.join, zip(*[iter(str(date))] * 2))) for date in
                                              df[column_name]]
     df[name_year] = df[name_year].astype('int') + 1900
@@ -29,75 +24,37 @@ def split_date(name_year: str, name_month: str, name_day: str, column_name: str,
     df[name_day] = df[name_day].astype('int')
     del df[column_name]
 
+    if new_column_name is not None:
+        join_date(name_year, name_month, name_day, new_column_name, df)
+
 
 def join_date(name_year: str, name_month: str, name_day: str, column_name: str, df: pd.DataFrame) -> None:
     df[column_name] = (df[name_year].astype('str') + '-' + df[name_month].astype('str') + '-' +
                        df[name_day].astype('str'))
     df[column_name] = pd.to_datetime(df[column_name])
 
-def read_account():
-    df = read_csv("account", ["account_id", "district_id", "frequency", "date"])
 
-    # Split Date into year, month and day
-    split_date("creation_year", "creation_month", "creation_day", "date", df)
-
-    write_csv(df, "account")
+def preprocess(file_name: str, parse_function: Callable[[pd.DataFrame], [pd.DataFrame]], index: bool = False):
+    df = read_csv(file_name)
+    df = parse_function(df)
+    write_csv(df, file_name, index=index)
 
 
-def read_loan_train():
-    df = read_csv("loan_train", ["loan_id", "account_id", "date", "amount", "duration", "payments", "status"])
+def read_account() -> None:
+    def parse_data(df: pd.DataFrame) -> pd.DataFrame:
+        split_date("creation_year", "creation_month", "creation_day", "date", df, "creation_date")
+        return df
 
-    # Split Date into year, month and day
-    split_date("loan_year", "loan_month", "loan_day", "date", df)
-
-    write_csv(df, "loan_train")
-
-    df = read_csv("loan_test", ["loan_id", "account_id", "date", "amount", "duration", "payments", "status"])
-
-    # Split Date into year, month and day
-    split_date("loan_year", "loan_month", "loan_day", "date", df)
-
-    write_csv(df, "loan_test")
+    preprocess("account", parse_data, index=True)
 
 
-def read_card_train():
-    df = read_csv("card_train")
-    split_date("issued_year", "issued_month", "issued_day", "issued", df)
-    write_csv(df, "card_train", index=False)
+def read_card() -> None:
+    def parse_data(df: pd.DataFrame) -> pd.DataFrame:
+        split_date("issued_year", "issued_month", "issued_day", "issued", df, "issued_date")
+        return df
 
-
-def read_district():
-    df = read_csv("district")
-
-    # Region direction and Region
-    df['region_direction'] = df['region'].apply(lambda x: x.split(" ")[0] if x.find(" ") != -1 else pd.NA)
-    df['region'] = df['region'].apply(lambda x: x.split(" ")[1] if x.find(" ") != -1 else x)
-
-    # Split name
-    df['city_area'] = df['name'].apply(lambda x: x.split(" - ")[1] if x.find(" - ") != -1 else pd.NA)
-    df['city'] = df['name'].apply(lambda x: x.split(" - ")[0] if x.find(" - ") != -1 else x)
-
-    del df['name']
-    del df['city_area']  # Not much information after analysis.
-
-    df = df.rename({
-        'no. of inhabitants': 'num_inhab',
-        'no. of cities ': 'num_cities',
-        'ratio of urban inhabitants ': 'perc_urban_inhab',
-        'no. of commited crimes \'96 ': 'num_crimes_96',
-        'no. of commited crimes \'95 ': 'num_crimes_95',
-        'unemploymant rate \'96 ': 'perc_unemploy_96',
-        'unemploymant rate \'95 ': 'perc_unemploy_95',
-        'average salary ': 'avg_salary',
-        'code': 'id',
-        'no. of enterpreneurs per 1000 inhabitants ': 'enterp_per_1000',
-        'no. of municipalities with inhabitants < 499 ': 'num_municip_inhab_0_499',
-        'no. of municipalities with inhabitants 500-1999': 'num_municip_inhab_500_1999',
-        'no. of municipalities with inhabitants 2000-9999 ': 'num_municip_inhab_2000_9999',
-        'no. of municipalities with inhabitants >10000 ': 'num_municip_inhab_10000_'
-    }, axis=1)
-
-    write_csv(df, "district", index=False)
+    preprocess("card_train", parse_data)
+    preprocess("card_test", parse_data)
 
 
 def read_client() -> None:
@@ -131,11 +88,53 @@ def read_disposition() -> None:
     preprocess("disp", parse_data)
 
 
+def read_district() -> None:
+    def parse_data(df: pd.DataFrame) -> pd.DataFrame:
+        # Region direction and Region
+        df['region_direction'] = df['region'].apply(lambda x: x.split(" ")[0] if x.find(" ") != -1 else pd.NA)
+        df['region'] = df['region'].apply(lambda x: x.split(" ")[1] if x.find(" ") != -1 else x)
+
+        # Split name
+        df['city_area'] = df['name'].apply(lambda x: x.split(" - ")[1] if x.find(" - ") != -1 else pd.NA)
+        df['city'] = df['name'].apply(lambda x: x.split(" - ")[0] if x.find(" - ") != -1 else x)
+
+        del df['name']
+        del df['city_area']  # Not much information after analysis.
+
+        df = df.rename({
+            'no. of inhabitants': 'num_inhab',
+            'no. of cities ': 'num_cities',
+            'ratio of urban inhabitants ': 'perc_urban_inhab',
+            'no. of commited crimes \'96 ': 'num_crimes_96',
+            'no. of commited crimes \'95 ': 'num_crimes_95',
+            'unemploymant rate \'96 ': 'perc_unemploy_96',
+            'unemploymant rate \'95 ': 'perc_unemploy_95',
+            'average salary ': 'avg_salary',
+            'code': 'id',
+            'no. of enterpreneurs per 1000 inhabitants ': 'enterp_per_1000',
+            'no. of municipalities with inhabitants < 499 ': 'num_municip_inhab_0_499',
+            'no. of municipalities with inhabitants 500-1999': 'num_municip_inhab_500_1999',
+            'no. of municipalities with inhabitants 2000-9999 ': 'num_municip_inhab_2000_9999',
+            'no. of municipalities with inhabitants >10000 ': 'num_municip_inhab_10000_'
+        }, axis=1)
+        return df
+
+    preprocess("district", parse_data, index=False)
+
+
+def read_loan() -> None:
+    def parse_data(df: pd.DataFrame) -> pd.DataFrame:
+        split_date("loan_year", "loan_month", "loan_day", "date", df, "loan_date")
+        return df
+
+    preprocess("loan_train", parse_data, index=True)
+    preprocess("loan_test", parse_data, index=True)
+
+
 def read_transaction() -> None:
     def parse_data(df: pd.DataFrame) -> pd.DataFrame:
         # Create a column for each date segment and creating a date attribute
-        split_date("trans_year", "trans_month", "trans_day", "date", df)
-        join_date("trans_year", "trans_month", "trans_day", "trans_date", df)
+        split_date("trans_year", "trans_month", "trans_day", "date", df, "trans_date")
 
         # Removing information about the operation from the type
         df.loc[df.type == 'withdrawal in cash', "type"] = 'withdrawal'
@@ -159,9 +158,9 @@ def read_transaction() -> None:
 
 if __name__ == "__main__":
     read_account()
-    read_card_train()
+    read_card()
     read_client()
     read_disposition()
     read_district()
-    read_loan_train()
+    read_loan()
     read_transaction()
