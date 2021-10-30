@@ -73,14 +73,16 @@ def corrlation_with_status():
     show_corr_matrix(df_loan_card)
     # print(df_loan_card.corr())
 
-    print("\n== CORRELATION WITH STATUS (LOAN AND CARD)")
+    print("\n== CORRELATION WITH STATUS (LOAN AND ACCOUNT)")
     df_loan_acct = df_loan.join(df_acct, how='inner', on='account_id', rsuffix='acct')
     print(df_loan_acct.corrwith(df_loan_acct['status']))
     show_corr_matrix(df_loan_acct)
 
+    print("\n== CORRELATION WITH STATUS (LOAN DIST)")
+    df_loan_dist = df_loan_acct.join(df_dist, how='inner', on='district_id', rsuffix='dist')
+    print(df_loan_dist.corrwith(df_loan_dist['status']))
+    print(df_loan_dist.head())
+
 
 if __name__ == '__main__':
     corrlation_with_status()
-
-
-# %%
