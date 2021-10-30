@@ -26,10 +26,9 @@ def study_district():
     print(df['region'].value_counts())
 
     # How to fillna in region directions
-    df_filter = df['region'] == 'Bohemia'      # the null value is in the bohemia region.
+    df_filter = df['region'] == 'Bohemia'  # the null value is in the bohemia region.
     print(df.where(df_filter)['region_direction'].value_counts())
     df['region_direction'] = df['region_direction'].fillna("central")
-
 
 
 def study_card():
