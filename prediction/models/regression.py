@@ -24,6 +24,3 @@ class Regression(Model):
         arguments = dataframe.loc[:, self.argument_columns]
         prediction = self.log_reg.predict_proba(arguments)[:, 0]
         return pd.DataFrame({'Id': dataframe.loan_id, 'Predicted': prediction}).set_index('Id')
-
-    def score(self) -> float:
-        return 0

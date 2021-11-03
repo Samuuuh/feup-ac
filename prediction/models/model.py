@@ -13,6 +13,5 @@ class Model(ABC):
     def test(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         pass
 
-    @abstractmethod
-    def score(self) -> float:
-        pass
+    def score(self, expected: pd.DataFrame, predicted: pd.DataFrame) -> float:
+        return 0
