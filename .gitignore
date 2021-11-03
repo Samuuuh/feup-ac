@@ -2,5 +2,9 @@
 .idea
 .vscode
 
+# Generated files
+data/preprocessed/*.csv
+data/submission/*.csv
+
 AI/**
 tests.py
