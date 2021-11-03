@@ -20,6 +20,5 @@ class Model(ABC):
         return expected.set_index('Id')
 
     def score(self, expected: pd.DataFrame, predicted: pd.DataFrame) -> float:
-        print(expected)
-        print(predicted)
+        # TODO: implement AUC for the two dataframes
         return 0
