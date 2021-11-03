@@ -21,7 +21,7 @@ def simple():
 
     # Test the model
     prediction = regression.test(train)
-    expected = Model.get_prediction(train, "loan_id", "status")
+    expected = Model.get_expected(train, "loan_id", "status")
     print("Score: ", regression.score(expected, prediction))
 
     # Apply to competition data
