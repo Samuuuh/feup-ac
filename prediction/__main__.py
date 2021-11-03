@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+from prediction.models.model import Model
 from prediction.models.regression import Regression
 
 
@@ -20,7 +21,8 @@ def simple():
 
     # Test the model
     prediction = regression.test(train)
-    print("Score: ", regression.score(test, prediction))
+    expected = Model.get_prediction(train, "loan_id", "status")
+    print("Score: ", regression.score(expected, prediction))
 
     # Apply to competition data
     # competition = read_frame("loan_comp")
