@@ -23,6 +23,7 @@ def simple():
     prediction = regression.test(train)
     expected = Model.get_expected(train, "loan_id", "status")
     print("Score: ", regression.score(expected, prediction))
+    regression.plot_roc()
 
     # Apply to competition data
     # competition = read_frame("loan_comp")

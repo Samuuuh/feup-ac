@@ -1,10 +1,15 @@
 from abc import ABC, abstractmethod
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
 
 class Model(ABC):
+
+    def __init__(self):
+        self.area = None
+        self.score_dataframe = None
 
     @abstractmethod
     def train(self, dataframe: pd.DataFrame) -> None:
@@ -20,8 +25,14 @@ class Model(ABC):
         expected = expected.rename(columns={id_column: "Id", goal_column: "Expected"})
         return expected.set_index('Id')
 
+    def plot_roc(self):
+        plt.plot(self.score_dataframe['sensibility'], self.score_dataframe['one_minus_specificity'])
+        plt.show()
+
     def score(self, expected: pd.DataFrame, predicted: pd.DataFrame) -> float:
-        # TODO: implement AUC for the two dataframes
+        if self.area is not None:
+            return self.area
+
         dataframe = predicted.join(expected, on='Id')
         ordered = dataframe.sort_values(by='Predicted', ascending=False)
 
@@ -40,8 +51,8 @@ class Model(ABC):
 
         # Remove temporary columns
         ordered = ordered.drop(columns=['yes', 'no', 'yes_sum', 'no_sum'])
+        self.score_dataframe = ordered
 
-        print(ordered)
-
-
-        return 0
+        # Calculate the area under the ROC using the trapezoidal rule
+        self.area = np.trapz(ordered['one_minus_specificity'], ordered['sensibility'])
+        return self.area
