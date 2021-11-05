@@ -5,7 +5,7 @@ from prediction.models.model import Model
 from prediction.models.regression import Regression
 
 
-def read_frame(name: str):
+def read_frame(name: str) -> pd.DataFrame:
     return pd.read_csv('./data/preprocessed/' + name + '.csv', sep=';')
 
 

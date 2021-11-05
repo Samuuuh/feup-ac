@@ -1,6 +1,7 @@
 # Programming Environment
 .idea
 .vscode
+docs/.ipynb_checkpoints
 
 # Generated files
 data/preprocessed/*.csv
