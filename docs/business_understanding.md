@@ -34,3 +34,7 @@ The system should satisfy the following requirements:
 
 ## Data Mining Goals
 
+This is classiefied as a prediction problem.
+By using __direct data mining__, this project main goal is to __predict__ the probability of a user paying back the loan if the bank allows the lending.     
+
+
