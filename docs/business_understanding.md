@@ -28,7 +28,7 @@ The system should satisfy the following requirements:
 
 - The application should provide a simple and easy to use CLI interface, so people can use it regardless of their programming knowledge
 - The project needs to be done before its deadline so that all the desired features are implemented and used in the evaluation of the project
-- The application should ahve two different pipelines, one for development and other for production
+- The application should have two different pipelines, one for development and other for production
 
 ## Data Mining Goals
 
