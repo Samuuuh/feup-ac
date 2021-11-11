@@ -3,6 +3,7 @@
 ## Business Goals
 
 - Improve their service by having an accurate prediction if the client can have a loan or not.
+- As a measurement of quality, the model here presented must be able to predict correctly at least 7 scenarios out of 10. 
 
 ## Requirements Analysis
 
@@ -34,5 +35,6 @@ The system should satisfy the following requirements:
 
 This is classiefied as a prediction problem.
 By using __direct data mining__, this project main goal is to __predict__ the probability of a user paying back the loan if the bank allows the lending.     
+As mentioned in the business goals, the model here presented must have at least an AUC of 0.7.
 
 
