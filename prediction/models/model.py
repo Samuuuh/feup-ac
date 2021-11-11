@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from sklearn.metrics import roc_auc_score
 
 
 class Model(ABC):
@@ -11,13 +12,16 @@ class Model(ABC):
         self.area = None
         self.score_dataframe = None
 
+
     @abstractmethod
     def train(self, dataframe: pd.DataFrame) -> None:
         pass
 
+
     @abstractmethod
     def test(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         pass
+
 
     @staticmethod
     def get_expected(dataframe: pd.DataFrame, id_column: str, goal_column: str) -> pd.DataFrame:
@@ -25,11 +29,14 @@ class Model(ABC):
         expected = expected.rename(columns={id_column: "Id", goal_column: "Expected"})
         return expected.set_index('Id')
 
+
     def plot_roc(self):
         plt.plot(self.score_dataframe['sensibility'], self.score_dataframe['one_minus_specificity'])
         plt.show()
 
+
     def score(self, expected: pd.DataFrame, predicted: pd.DataFrame) -> float:
+        
         if self.area is not None:
             return self.area
 
@@ -55,4 +62,8 @@ class Model(ABC):
 
         # Calculate the area under the ROC using the trapezoidal rule
         self.area = np.trapz(ordered['one_minus_specificity'], ordered['sensibility'])
-        return self.area
+        return self.area 
+
+
+    def print_auc_sklearn(self, expected: pd.DataFrame, predicted: pd.DataFrame): 
+        print(f"score {roc_auc_score(expected, predicted)}")

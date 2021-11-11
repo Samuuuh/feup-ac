@@ -9,3 +9,6 @@ data/submission/*.csv
 
 AI/**
 tests.py
+prediction/models/__pycache__/
+
+prediction/__pycache__/
