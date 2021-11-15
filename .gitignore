@@ -2,7 +2,7 @@
 .idea
 .vscode
 docs/.ipynb_checkpoints
-**/_pycache__
+**/__pycache__
 
 # Generated files
 data/preprocessed/*.csv
