@@ -12,3 +12,9 @@ tests.py
 prediction/models/__pycache__/
 
 prediction/__pycache__/
+
+src/prediction/__pycache__/
+
+src/dataBuilder/__pycache__/
+
+src/__pycache__/

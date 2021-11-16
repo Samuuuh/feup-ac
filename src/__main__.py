@@ -5,19 +5,30 @@ from dataBuilder.loan_builder import LoanBuilder
 
 
 def build(parser: configparser.ConfigParser):
-    tables = parser['Selected Tables']
+    Logger.print_info("Generating tables...")
+    tables = parser['selected tables']
     df = LoanBuilder(parser['loan']).df
-    print(df.head())
+
+    if tables['account'] == 'True':
+        Logger.print_wrn("Account still not implemented")
+    if tables['card'] == 'True':
+        Logger.print_wrn("Card still not implemented")
+    if tables['client'] == 'True':
+        Logger.print_wrn("Client still not implemented")
+    if tables['disposition'] == 'True':
+        Logger.print_wrn("Disposition still not implemented")
+    if tables['transactions'] == 'True':
+        Logger.print_wrn("Transactions till not implemented")
+
+    return df
 
 
 if __name__ == '__main__':
-    filepath = os.path.dirname(os.path.abspath(__file__)) + "/configparser.ini" 
+    filepath = os.path.dirname(os.path.abspath(__file__)) + "/configparser.ini"
 
     if os.path.isfile(filepath):
         parser = configparser.ConfigParser()
         parser.read(filepath)
-        build(parser)
+        df = build(parser)
     else:
         Logger.print_err("No config parser in this folder.")
-
-
