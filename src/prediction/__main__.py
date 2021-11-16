@@ -9,8 +9,7 @@ def read_frame(name: str) -> pd.DataFrame:
     return pd.read_csv('./data/preprocessed/' + name + '.csv', sep=';')
 
 
-def simple():
-    development = read_frame("loan_dev")
+def simple(development: pd.DataFrame) -> None:
 
     # Divide development data into test and train
     train, test = train_test_split(development, test_size=0.2)
