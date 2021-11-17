@@ -8,7 +8,7 @@ PRAGMA foreign_keys = off;
 DROP TABLE IF EXISTS Account;
 CREATE TABLE Account (
   account_id INTEGER PRIMARY KEY,
-  district_id INTEGER NOT NULL UNIQUE,
+  district_id INTEGER REFERENCES District(id),
   frequency VARCHAR(255),
   creation_year INTEGER,
   creation_month INTEGER,
@@ -19,7 +19,7 @@ CREATE TABLE Account (
 DROP TABLE IF EXISTS Card;
 CREATE TABLE Card (
   card_id INTEGER PRIMARY KEY,
-  disp_id INTEGER,
+  disp_id INTEGER REFERENCES Disposition(disp_id),
   type VARCHAR(255),
   issued_year INTEGER,
   issued_month INTEGER,
@@ -30,7 +30,7 @@ CREATE TABLE Card (
 DROP TABLE IF EXISTS Client;
 CREATE TABLE Client (
   client_id INTEGER PRIMARY KEY,
-  district_id INTEGER REFERENCES Utilizador(idUtilizador) ON DELETE SET NULL ON UPDATE CASCADE,
+  district_id INTEGER REFERENCES District(id),
   birthdate_year INTEGER,
   birthdate_month INTEGER,
   birthdate_day INTEGER,
@@ -41,13 +41,13 @@ CREATE TABLE Client (
 DROP TABLE IF EXISTS Disposition;
 CREATE TABLE Disposition (
   disp_id INTEGER PRIMARY KEY,
-  client_id INTEGER,
-  account_id INTEGER,
+  client_id INTEGER REFERENCES Client(client_id),
+  account_id INTEGER REFERENCES Account(account_id),
   type VARCHAR(255),
 );
 
 DROP TABLE IF EXISTS District;
-CREATE TABLE Demograph (
+CREATE TABLE District (
   id INTEGER PRIMARY KEY,
   region  VARCHAR(255),
   num_inhab INTEGER,
@@ -70,7 +70,7 @@ CREATE TABLE Demograph (
 DROP TABLE IF EXISTS Loan;
 CREATE TABLE Loan (
   loan_id INTEGER,
-  account_id INTEGER,
+  account_id INTEGER REFERENCES Account(account_id),
   amount INTEGER,
   duration INTEGER,
   payments INTEGER,
@@ -84,7 +84,7 @@ CREATE TABLE Loan (
 DROP TABLE IF EXISTS Transactions;
 CREATE TABLE Transactions (
   trans_id INTEGER,
-  account_id INTEGER,
+  account_id INTEGER REFERENCES Account(account_id),
   type VARCHAR(255),
   operation REAL,
   amount REAL,
