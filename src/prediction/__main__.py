@@ -1,8 +1,8 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from models.model import Model
-from models.regression import Regression
+from .models.model import Model
+from .models.regression import Regression
 
 
 def read_frame(name: str) -> pd.DataFrame:
@@ -52,6 +52,6 @@ def search_grid_cv():
 
 
 
-if __name__ == "__main__":
-    simple()
-    search_grid_cv()
+# if __name__ == "__main__":
+#     simple()
+#     search_grid_cv()

@@ -1,8 +1,11 @@
 import configparser
 import os
-from logger import Logger
-from dataBuilder.loan_builder import LoanBuilder
+import pandas as pd
 
+from dataBuilder.loan_builder import LoanBuilder
+from consts import ModelType
+from logger import Logger
+from prediction.__main__ import *
 
 def build(parser: configparser.ConfigParser):
     Logger.print_info("Generating tables...")
@@ -22,6 +25,16 @@ def build(parser: configparser.ConfigParser):
 
     return df
 
+def call_model(parser: configparser.ConfigParser, df: pd.DataFrame) -> None:
+    model = parser['settings']['model']
+    Logger.print_info(f"Calling model {model}...")  
+    if model == ModelType.LOG_REGRESSION:
+        simple(df)
+    else: 
+        Logger.print_err(f"{model} is not a valid model!")
+    
+
+
 
 if __name__ == '__main__':
     filepath = os.path.dirname(os.path.abspath(__file__)) + "/configparser.ini"
@@ -30,5 +43,6 @@ if __name__ == '__main__':
         parser = configparser.ConfigParser()
         parser.read(filepath)
         df = build(parser)
+        call_model(parser, df)
     else:
         Logger.print_err("No config parser in this folder.")
