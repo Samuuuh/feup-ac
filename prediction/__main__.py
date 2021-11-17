@@ -30,6 +30,28 @@ def simple():
     # prediction = regression.test(competition)
     # prediction.to_csv('./data/submission/sub-linear.csv')
 
+def search_grid_cv():
+    development = read_frame("loan_dev")
 
+    # Divide development data into test and train
+    train, test = train_test_split(development, test_size=0.2)
+
+    # Train the model
+    regression = Regression(['amount', 'loan_year', 'payments', 'duration', 'loan_month'], 'status')
+    regression.train(train)
+
+    # Test the model
+    prediction = regression.test(test)
+    expected = Model.get_expected(test, "loan_id", "status")
+    print("Score: ", regression.score(expected, prediction))
+    #regression.plot_roc()
+
+    # Apply to competition data
+    competition = read_frame("loan_comp")
+    prediction = regression.test(competition)
+    prediction.to_csv('./data/submission/sub-linear.csv')
+
+
+    
 if __name__ == "__main__":
     simple()
