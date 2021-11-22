@@ -2,10 +2,12 @@ import configparser
 import os
 import pandas as pd
 
-from dataBuilder.loan_builder import LoanBuilder
-from consts import ModelType
-from logger import Logger
-from prediction.__main__ import *
+from .dataBuilder.loan_builder import LoanBuilder
+from .consts import ModelType
+from .logger import Logger
+
+from .prediction.grid_log_regression import grid_log_regression
+from .prediction.log_regression import log_regression
 
 def build(parser: configparser.ConfigParser):
     Logger.print_info("Generating tables...")
@@ -28,13 +30,15 @@ def build(parser: configparser.ConfigParser):
 def call_model(parser: configparser.ConfigParser, df: pd.DataFrame) -> None:
     model = parser['settings']['model']
     Logger.print_info(f"Calling model {model}...")  
+
+    # Call the train models.
     if model == ModelType.LOG_REGRESSION:
-        simple(df)
+        log_regression(df) 
+    elif model == ModelType.GRID_LOG_REGRESSION:
+        grid_log_regression(df)
     else: 
         Logger.print_err(f"{model} is not a valid model!")
     
-
-
 
 if __name__ == '__main__':
     filepath = os.path.dirname(os.path.abspath(__file__)) + "/configparser.ini"
