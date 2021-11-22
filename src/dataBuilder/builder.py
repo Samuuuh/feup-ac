@@ -1,9 +1,7 @@
 from abc import abstractmethod
 import pandas as pd
 import os
-import sys
-from logger import Logger
-sys.path.append("..") # Adds higher directory to python modules path.
+from ..logger import Logger
 
 class Builder:
 

@@ -1,12 +1,8 @@
 import pandas as pd
-import os
 import configparser
-
-from dataBuilder.builder import Builder
-from logger import Logger
 import sys
-sys.path.append("..") # Adds higher directory to python modules path.
-
+from .builder import Builder
+from ..logger import Logger
 
 class LoanBuilder(Builder):
     def __init__(self, columns: configparser.SectionProxy):
