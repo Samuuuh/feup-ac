@@ -8,6 +8,7 @@ from .logger import Logger
 
 from .prediction.grid_log_regression import grid_log_regression
 from .prediction.log_regression import log_regression
+from .prediction.tree_classifier import tree_classifier
 
 
 def build(parser: configparser.ConfigParser) -> LoanBuilder:
@@ -46,6 +47,8 @@ def call_model(parser: configparser.ConfigParser, loan_builder: LoanBuilder) -> 
         log_regression(dev, comp, debug_mode) 
     elif model == ModelType.GRID_LOG_REGRESSION:
         grid_log_regression(dev, comp, debug_mode)
+    elif model == ModelType.TREE_CLASSIFIER:
+        tree_classifier(dev, comp, debug_mode)
     else: 
         Logger.print_err(f"{model} is not a valid model!")
     

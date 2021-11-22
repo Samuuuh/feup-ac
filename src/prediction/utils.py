@@ -2,14 +2,11 @@ import pandas as pd
 import os 
 
 def get_x(df: pd.DataFrame) -> None:
-    return df.loc[:, df.columns != 'status']
+    condition = (df.columns != 'status') & (df.columns != 'account_id') & (df.columns != 'loan_id')
+    return df.loc[:, condition ]
 
 def get_y(df: pd.DataFrame) -> None:
     return df.status
-
-def read_frame(name: str) -> pd.DataFrame:
-    currdir = os.path.dirname(__file__)
-    return pd.read_csv(f'{currdir}/../data/preprocessed/{name}.csv', sep=';') 
 
 def save_result(loan_id, predicted, filename: str): 
     currdir = os.path.dirname(__file__)

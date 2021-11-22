@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split, KFold, GridSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
 
-from .utils import get_x, get_y, read_frame, save_result
+from .utils import get_x, get_y, save_result
 
 
 def grid_log_regression(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) -> None:
