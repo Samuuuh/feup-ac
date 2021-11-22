@@ -10,12 +10,13 @@ class Builder:
             return pd.read_csv(position + '/data/preprocessed/' + name + '.csv', sep=';')
 
     # Remove not selected columns
-    def drop_column(self, col: str):
-        if self.columns.get(col) == "False" and col in self.df.columns: 
-            self.df = self.df.drop([col], axis=1) 
+    def drop_column(self, col: str, df: pd.DataFrame) -> pd.DataFrame:
+        if self.columns.get(col) == "False" and col in df.columns: 
+            df = df.drop([col], axis=1) 
+        return df
 
     @abstractmethod
-    def handle_creation(self, col: str): 
+    def handle_creation(self, col: str, df: pd.DataFrame) -> pd.DataFrame: 
         Logger.print_err("handle_creation not implemented")
 
     @abstractmethod

@@ -5,19 +5,18 @@ from sklearn.model_selection import train_test_split, KFold, GridSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
 
-from .utils import get_x, get_y
+from .utils import get_x, get_y, read_frame, save_result
 
 
-def grid_log_regression(df: pd.DataFrame) -> None:
+def grid_log_regression(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) -> None:
 
     # Divide development data into test and train
-    train, test = train_test_split(df, test_size=0.2)
+    train, test = train_test_split(df_dev, test_size=0.2)
 
     # Train the model
     x = get_x(train)
-    y = get_y(train)
+    y = get_y(train) 
 
-    # Fit the regression
     log_reg = LogisticRegression()
     cross_validation = KFold()
     parameter_grid={"C": np.logspace(-3,-3, 7), "penalty": ["l2"]}
@@ -29,7 +28,11 @@ def grid_log_regression(df: pd.DataFrame) -> None:
     )
     grid_search.fit(x, y.values.ravel())
 
-    # Test
-    predicted = grid_search.predict_proba(get_x(test))[::, 1]
-    expected  = get_y(test)
-    print(f"score {roc_auc_score(expected, predicted)}")
+    # Apply training
+    if debug:
+        predicted = grid_search.predict_proba(get_x(test))[::, 1]
+        expected  = get_y(test)
+        print(f"score {roc_auc_score(expected, predicted)}")
+    else: 
+        pred_competition = grid_search.predict_proba(get_x(df_comp))   
+        save_result(df_comp['loan_id'], pred_competition[::, -1], 'grid_log_reg')
