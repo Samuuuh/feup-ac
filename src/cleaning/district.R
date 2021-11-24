@@ -12,26 +12,6 @@ ggplot(dist, aes(region, perc_urban_inhab)) + geom_boxplot() +
   ggtitle("Distribution of perc_urban_inhab per season")
 
 
-# REDUNDANT DATA ==============================================================
-
-# We have some repeated cities...
-length(unique(dist$city))
-length(dist$id)
-
-# Ids with duplicated city
-duplicated_city<-dist[duplicated(dist$city),]$city
-dist[dist$city %in% duplicated_city, ]
-
-# Remove outliers => TODO: change ids in the clients table.
-dist<-dist[dist$id !=54,]
-dist<-dist[dist$id !=26,]
-
-duplicated_city<-dist[duplicated(dist$city),]$city
-dist[dist$city %in% duplicated_city, ]
-
-dist$city <- NULL
-dist$region_direction <- NULL 
-
 # MISSING DATA ===============================================================
 
 # perc_unemploy_95 and num_crimes_95 columns contains missing data.

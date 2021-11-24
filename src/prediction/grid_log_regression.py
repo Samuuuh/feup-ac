@@ -17,6 +17,7 @@ def grid_log_regression(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool
     x = get_x(train)
     y = get_y(train) 
 
+    # Other types of validation. three-fold-validation, for example. 
     log_reg = LogisticRegression()
     cross_validation = KFold()
     parameter_grid={"C": np.logspace(-3,-3, 7), "penalty": ["l2"]}
