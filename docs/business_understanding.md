@@ -2,10 +2,10 @@
 
 ## Business Goals
 
-- Lower the percentage of unpaid loans.
-- Company with more confidance when making new loans.
-- Improve their service by having an accurate prediction if the client can have a loan or not.
 - As a measurement of quality, the model here presented must be able to predict correctly at least 7 scenarios out of 10 where the person does not pay the loan. 
+- Decrease the percentage of unpaid loans.
+- The company can decrease the risk of a loan beign left unpaid.
+- Improve their service by having an accurate prediction if the client can have a loan or not.
 - The study finishes on time.
 
 ## Requirements Analysis
@@ -35,9 +35,10 @@ The system should satisfy the following requirements:
 
 ## Data Mining Goals
 
-By using __direct data mining__, this project main goal is to __predict__ the probability of a user paying back the loan if the bank allows the lending.     
-As mentioned in the business goals, the model here presented must have at least an AUC of 0.7.
 Now that the business goal is clear, it's time to translate it into a data mining reality. 
+
+By using __direct data mining__, this project main goal is to __predict__ the probability of a user paying back the loan if the bank allows the lending.     
+As mentioned in the business goals, the model here presented must have at least an AUC of 0.7. 
 
 - This is classified as a prediction problem.
 - Building a model using available data to predict the likelihood of a person paying back the loan
