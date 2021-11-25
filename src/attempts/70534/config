@@ -1,0 +1,40 @@
+[settings]
+# Possible models: LogisticRegression
+debug = False
+model = GridLogisticRegression
+
+[paths]
+
+# Which columns to include 
+[selected tables]
+account = True
+card = False
+client = False 
+disposition = False 
+# Must always be true. 
+loan = True                 
+transactions = False 
+
+
+[account]
+[card]
+
+[client]
+
+[disposition]
+
+[loan]
+# Keep default columns
+amount = True
+duration = True 
+loan_year = True 
+loan_month = False 
+loan_day = False
+loan_date = False 
+payments = True
+# Must always be true.
+status = True
+# An example of new column
+new_column = True
+
+[transactions]
