@@ -111,7 +111,7 @@ def read_district() -> None:
             'unemploymant rate \'96 ': 'perc_unemploy_96',
             'unemploymant rate \'95 ': 'perc_unemploy_95',
             'average salary ': 'avg_salary',
-            'code': 'id',
+            'code': 'district_id',
             'no. of enterpreneurs per 1000 inhabitants ': 'enterp_per_1000',
             'no. of municipalities with inhabitants < 499 ': 'num_municip_inhab_0_499',
             'no. of municipalities with inhabitants 500-1999': 'num_municip_inhab_500_1999',
