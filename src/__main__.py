@@ -1,6 +1,8 @@
 import configparser
 import os
 import pandas as pd
+from src.prediction.random_forest import random_forest
+from src.prediction.random_forest_smote import random_forest_smote
 
 from src.preprocessing.utils import read_cleaned_csv, read_preprocessed_csv
 
@@ -28,22 +30,34 @@ def build(parser: configparser.ConfigParser):
 
     Logger.print_info("Getting tables...")
 
+    disp = read_cleaned_csv("disp")
+    client = read_cleaned_csv("client")
+    card = read_cleaned_csv("card")
+
     # Reading all the tables
     loan_dev = read_preprocessed_csv("loan_dev")
     loan_comp = read_preprocessed_csv("loan_comp")
+
+    trans_comp = read_cleaned_csv("trans_comp")
+    trans_dev = read_cleaned_csv("trans_dev")
+
     account = read_preprocessed_csv("account")
-    disp = read_preprocessed_csv("disp")
-    client = read_cleaned_csv("client")
     loan_merged = []
 
     # Merging other tables with the loan_dev and loan_comp
-    for loan in [loan_dev, loan_comp]:
-        df = pd.merge(account, disp, on="account_id", how="inner")                          # Merge account and disp
-        df = pd.merge(loan, df, on="account_id", how="left", suffixes=("_acc", "_loan"))    # Merge loan
-        df = pd.merge(df, client, on="client_id", how="left", suffixes=("_acc", "_client")) # Merge client
+    for i, loan in enumerate([loan_dev, loan_comp]):
+        
+        df = pd.merge(loan, account, on="account_id", how="left", suffixes=("_acc", "_loan"))    # Merge loan
+        df = pd.merge(df, disp, on='account_id', how="inner")
+        df = pd.merge(df, client, on="client_id", how="inner")
+        df = pd.merge(df, card, on="disp_id", how="left")
+        if i == 0:
+            df = pd.merge(df, trans_dev, on="account_id", how="inner")
+        else:
+            df = pd.merge(df, trans_comp, on="account_id", how="inner")
+
         df = set_columns(parser['attributes'], df)                                          # Remove columns
         loan_merged.append(df)
-
     return loan_merged
 
 
@@ -59,6 +73,10 @@ def call_model(parser: configparser.ConfigParser, dev: pd.DataFrame, comp: pd.Da
         grid_log_regression(dev, comp, debug_mode)
     elif model == ModelType.TREE_CLASSIFIER:
         tree_classifier(dev, comp, debug_mode)
+    elif model == ModelType.RANDOM_FOREST:
+        random_forest(dev, comp, debug_mode)
+    elif model == ModelType.RANDOM_FOREST_SMOTE:
+        random_forest_smote(dev, comp, debug_mode)
     else:
         Logger.print_err(f"{model} is not a valid model!")
 

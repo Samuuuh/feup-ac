@@ -55,7 +55,7 @@ dist$region <- unclass(dist_factor_region)
 dist
 
 # Numeric data
-write.csv(dist, file="../data/cleaned/dist.csv")
+write.csv(dist, file="../data/cleaned/dist.csv", row.names = FALSE)
 
 
 
