@@ -7,7 +7,7 @@ import numpy as np
 
 
 def read_frame(name: str) -> pd.DataFrame:
-    return pd.read_csv('data/preprocessed/' + name + '.csv', sep=';')
+    return pd.read_csv('../data/preprocessed/' + name + '.csv', sep=';')
 
 
 loans = read_frame('loan_dev')

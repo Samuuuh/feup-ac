@@ -1,10 +1,10 @@
-card_dev <- read.delim("../data/preprocessed/card_dev.csv", sep=";")
-card_comp <- read.delim("../data/preprocessed/card_comp.csv", sep=";")
+card_dev <- read.delim("../../data/preprocessed/card_dev.csv", sep=";")
+card_comp <- read.delim("../../data/preprocessed/card_comp.csv", sep=";")
 
 card <- rbind(card_dev, card_comp)
 card$type<-unclass(as.factor(card$type))
 
-disp <- read.delim("../data/preprocessed/disp.csv", sep=";")
+disp <- read.delim("../../data/preprocessed/disp.csv", sep=";")
 disp$type<-NULL
 
 
@@ -24,4 +24,4 @@ card_merge$card_id<-NULL
 card_merge$account_id<-NULL
 card_merge$client_id<-NULL
 
-write.csv(card_merge, file="../data/cleaned/card.csv", row.names = FALSE)
+write.csv(card_merge, file="../../data/cleaned/card.csv", row.names = FALSE)

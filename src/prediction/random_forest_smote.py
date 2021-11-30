@@ -23,10 +23,10 @@ def random_forest_smote(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool
     clf.fit(x_res, y_res)
 
     
-    predicted = clf.predict_proba(x_test)[::, 1]
+    predicted = clf.predict_proba(x_test)[::, 0]
     expected = y_test
     print(f"score {roc_auc_score(expected, predicted)}") 
     
     if not debug: 
         pred_competition = clf.predict_proba(get_x(df_comp))
-        save_result(df_comp['loan_id'], pred_competition[::, -1], 'random_forest')
+        save_result(df_comp['loan_id'], pred_competition[::, 0], 'random_forest')

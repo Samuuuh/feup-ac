@@ -5,9 +5,6 @@ docs/.ipynb_checkpoints
 **/__pycache__
 
 # Generated files
-data/preprocessed/*.csv
-data/submission/*.csv
-
 AI/**
 tests.py
 prediction/models/__pycache__/

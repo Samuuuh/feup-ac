@@ -3,9 +3,7 @@ from collections.abc import Callable
 import numpy as np
 import pandas as pd
 from numpy import NaN
-from utils import read_csv, write_csv
-
-
+from .utils import read_csv, write_csv
 
 
 def split_date(name_year: str, name_month: str, name_day: str, column_name: str, df: pd.DataFrame,

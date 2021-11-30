@@ -1,9 +1,9 @@
 # Executed inside src/cleaning folder
 
 # Must import the preprocessed/client.csv
-client<-read.delim("../data/preprocessed/client.csv", sep=";")
-loan <- read.delim("../data/preprocessed/loan_dev.csv", sep=";")
-disp <- read.delim("../data/preprocessed/disp.csv", sep=";")
+client<-read.delim("../../data/preprocessed/client.csv", sep=";")
+loan <- read.delim("../../data/preprocessed/loan_dev.csv", sep=";")
+disp <- read.delim("../../data/preprocessed/disp.csv", sep=";")
 
 client$birthdate <- NULL
 client$sex<-unclass(as.factor(client$sex))
@@ -34,4 +34,4 @@ merged$disp_id<-NULL
 # Analysis 
 
 
-write.csv(client, file="../data/cleaned/client.csv", row.names = FALSE)
+write.csv(client, file="../../data/cleaned/client.csv", row.names = FALSE)

@@ -143,3 +143,4 @@ The conclusion that get from this table is:
 
 The people who doesn't have any account identification are much more likely to have a status 1. 
 
+# 
