@@ -2,15 +2,20 @@
 library(dplyr)
 library(ggplot2)
 library(ggpubr)
+library(RSQLite)
+library(DBI)
+
+con_comp <- dbConnect(RSQLite::SQLite(), "data/ac-comp_v-1.db")
+con_dev <- dbConnect(RSQLite::SQLite(), "data/ac-dev_v-1.db")
 
 # Train
-trans<-read.delim("data/preprocessed/trans_dev.csv", sep=";")
-loan <- read.delim("data/preprocessed/loan_dev.csv", sep=";")
+trans<-dbGetQuery(con_dev, "SELECT * FROM trans")
+loan <-dbGetQuery(con_dev, "SELECT * FROM loan")
 loan <- loan[c("account_id", "loan_date", "duration", "amount", "status")]
 
 # Test
-trans_comp<-read.delim("data/preprocessed/trans_comp.csv", sep=";")
-loan_comp <- read.delim("data/preprocessed/loan_comp.csv", sep=";")
+trans_comp<-dbGetQuery(con_comp, "SELECT * FROM trans")
+loan_comp <-dbGetQuery(con_comp, "SELECT * FROM loan")
 loan_comp <- loan_comp[c("account_id", "loan_date", "duration", "amount", "status")]
 
 
@@ -86,7 +91,6 @@ ggplot(trans, aes(x=trans$operation)) + geom_bar() + ggtitle("Operations count")
   
 
 # 2.1) Build
-  
   merged$diff_days <- merged$loan_date - merged$trans_date
   merged$diff_month <- as.numeric(floor(merged$diff_days/30)) # Diff month from the loan
   
