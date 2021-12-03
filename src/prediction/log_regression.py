@@ -25,7 +25,7 @@ def log_regression(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) -> 
         print(f"score {roc_auc_score(expected, predicted)}")
     else: 
         pred_competition = log_reg.predict_proba(get_x(df_comp))   
-        save_result(df_comp['loan_id'], pred_competition[::, -1], 'grid_log_reg')
+        save_result(df_comp['loan_id'], pred_competition[::, 1], 'grid_log_reg')
 
 
 

@@ -80,6 +80,13 @@ def call_model(parser: configparser.ConfigParser, dev: pd.DataFrame, comp: pd.Da
     else:
         Logger.print_err(f"{model} is not a valid model!")
 
+def convert_status(df: pd.DataFrame):
+    """ This function is responsible for changing the status in the following format: 
+    -1 -> 1 
+    1 -> 0 
+    """
+    df['status'] = df['status'].replace([1,-1], [0, 1])
+    return df 
 
 
 if __name__ == '__main__':
@@ -88,7 +95,8 @@ if __name__ == '__main__':
     if os.path.isfile(filepath):
         parser = configparser.ConfigParser()
         parser.read(filepath)                       # Get's the config file.
-        df = build(parser)                          # Builds the dataframe.
+        df = build(parser)                          # Builds the dataframe. 
+        df[0] = convert_status(df[0]) 
         call_model(parser, df[0], df[1])            # Calls the model.
     else:
         Logger.print_err("No config parser in this folder.")
