@@ -9,7 +9,6 @@ from .utils import get_x, get_y, save_result
 
 
 def grid_log_regression(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) -> None:
-    print(df_dev['status'])
     # Divide development data into test and train
     train, test = train_test_split(df_dev, test_size=0.2)
 
