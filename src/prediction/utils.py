@@ -13,6 +13,5 @@ def get_y(df: pd.DataFrame) -> None:
 
 
 def save_result(loan_id, predicted, filename: str):
-    currdir = os.path.dirname(__file__)
     prediction = pd.DataFrame({'Id': loan_id, 'Predicted': predicted}).set_index('Id')
-    prediction.to_csv(f'{currdir}/../data/submission/{filename}.csv')
+    prediction.to_csv(f'data/submission/{filename}.csv')

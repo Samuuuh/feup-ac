@@ -4,13 +4,13 @@ library(ggplot2)
 library(ggpubr)
 
 # Train
-trans<-read.delim("../../data/preprocessed/trans_dev.csv", sep=";")
-loan <- read.delim("../../data/preprocessed/loan_dev.csv", sep=";")
+trans<-read.delim("data/preprocessed/trans_dev.csv", sep=";")
+loan <- read.delim("data/preprocessed/loan_dev.csv", sep=";")
 loan <- loan[c("account_id", "loan_date", "duration", "amount", "status")]
 
 # Test
-trans_comp<-read.delim("../../data/preprocessed/trans_comp.csv", sep=";")
-loan_comp <- read.delim("../../data/preprocessed/loan_comp.csv", sep=";")
+trans_comp<-read.delim("data/preprocessed/trans_comp.csv", sep=";")
+loan_comp <- read.delim("data/preprocessed/loan_comp.csv", sep=";")
 loan_comp <- loan_comp[c("account_id", "loan_date", "duration", "amount", "status")]
 
 
@@ -173,5 +173,5 @@ ggplot(trans, aes(x=trans$operation)) + geom_bar() + ggtitle("Operations count")
   trans_comp$amount <-NULL
   
 
-write.csv(trans, file="../../data/cleaned/trans_dev.csv", row.names = FALSE)
-write.csv(trans_comp, file="../../data/cleaned/trans_comp.csv", row.names = FALSE)
+write.csv(trans, file="data/cleaned/trans_dev.csv", row.names = FALSE)
+write.csv(trans_comp, file="data/cleaned/trans_comp.csv", row.names = FALSE)

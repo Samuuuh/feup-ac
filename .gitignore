@@ -2,17 +2,14 @@
 .idea
 .vscode
 docs/.ipynb_checkpoints
-**/__pycache__
+data_env/*
+**/__pycache__/*
 
 # Generated files
 AI/**
-tests.py
+src/cleaning/.Rproj.user/*
 prediction/models/__pycache__/
-
 prediction/__pycache__/
-
 src/prediction/__pycache__/
-
 src/dataBuilder/__pycache__/
-
 src/__pycache__/

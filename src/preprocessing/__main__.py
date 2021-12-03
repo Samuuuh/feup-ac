@@ -25,7 +25,7 @@ def join_date(name_year: str, name_month: str, name_day: str, column_name: str, 
     df[column_name] = pd.to_datetime(df[column_name])
 
 
-def preprocess(file_name: str, parse_function: Callable[[pd.DataFrame], [pd.DataFrame]]):
+def preprocess(file_name: str, parse_function):
     df = read_csv(file_name)
     df = parse_function(df)
     write_csv(df, file_name, index=False)

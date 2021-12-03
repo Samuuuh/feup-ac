@@ -1,9 +1,10 @@
+
 library(dplyr)
 library(ggplot2)
 library(ggpubr)
 
 # Instructions: set the directory workdirectory in the filepath.
-dist<-read.delim("../../data/preprocessed/district.csv", sep=";")
+dist<-read.delim("data/preprocessed/district.csv", sep=";")
 
 # OUTLIERS ====================================================================
 
@@ -55,7 +56,7 @@ dist$region <- unclass(dist_factor_region)
 dist
 
 # Numeric data
-write.csv(dist, file="../../data/cleaned/dist.csv", row.names = FALSE)
+write.csv(dist, file="data/cleaned/dist.csv", row.names = FALSE)
 
 
 
