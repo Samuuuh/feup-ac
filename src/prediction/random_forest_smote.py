@@ -11,11 +11,7 @@ def random_forest_smote(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool
     x = get_x(df_dev)
     y = get_y(df_dev) 
 
-    #print(all_but_response)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, stratify=y)
-
-    print(df_dev.columns)
-    print(x.columns)
 
     smp = SMOTE()
     x_res, y_res = smp.fit_resample(x_train, y_train)

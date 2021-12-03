@@ -1,6 +1,7 @@
 import configparser
 import os
 import pandas as pd
+from src.prediction.neural_networks import neural_network_smote
 from src.prediction.random_forest import random_forest
 from src.prediction.random_forest_smote import random_forest_smote
 
@@ -76,7 +77,9 @@ def call_model(parser: configparser.ConfigParser, dev: pd.DataFrame, comp: pd.Da
     elif model == ModelType.RANDOM_FOREST:
         random_forest(dev, comp, debug_mode)
     elif model == ModelType.RANDOM_FOREST_SMOTE:
-        random_forest_smote(dev, comp, debug_mode)
+        random_forest_smote(dev, comp, debug_mode) 
+    elif model == ModelType.NEURAL_NETWORK_SMOTE: 
+        neural_network_smote(dev, comp, debug_mode)
     else:
         Logger.print_err(f"{model} is not a valid model!")
 

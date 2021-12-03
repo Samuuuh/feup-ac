@@ -5,4 +5,5 @@ class ModelType:
     GRID_LOG_REGRESSION = "GridLogisticRegression"
     TREE_CLASSIFIER = "TreeClassifier"
     RANDOM_FOREST = "RandomForest"
-    RANDOM_FOREST_SMOTE = "RandomForestSmote"
+    RANDOM_FOREST_SMOTE = "RandomForestSmote" 
+    NEURAL_NETWORK_SMOTE = "NeuralNetworkSmote"
