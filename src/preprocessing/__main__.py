@@ -170,4 +170,15 @@ if __name__ == "__main__":
     process_transaction(connection)
     connection.close()
 
-    #db_comp  = f'./data/ac-comp_v-{v}.db'
+    db_comp  = f'./data/ac-comp_v-{v}.db'
+    init_comp_db(v)
+    connection = sqlite3.connect(db_comp)
+
+    process_account(connection)
+    process_card(connection)
+    process_client(connection)
+    process_disposition(connection)
+    process_district(connection)
+    process_loan(connection)
+    process_transaction(connection)
+

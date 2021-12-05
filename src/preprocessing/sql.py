@@ -124,7 +124,7 @@ def init_comp_db(id):
   insert = []
   for i, row in enumerate(contents):
       if i != 0: 
-          insert.append([int(row[0]), int(row[1]), int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6])])
+        insert.append([int(row[0]), int(row[1]), int(row[2]), int(row[3]), int(row[4]), int(row[5]), ''])
   cursor.executemany(insert_records, insert)
 
   # -- Table Transactions

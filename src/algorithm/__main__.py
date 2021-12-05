@@ -14,6 +14,7 @@ from .prediction.grid_log_regression import grid_log_regression
 from .prediction.log_regression import log_regression
 from .prediction.tree_classifier import tree_classifier
 
+import sqlite3
 
 def set_columns(columns, df: pd.DataFrame) -> pd.DataFrame:
     for col in columns:
@@ -31,18 +32,28 @@ def build(parser: configparser.ConfigParser):
 
     Logger.print_info("Getting tables...")
 
+    # Reading all the tables
+    db_dev = './data/ac-dev_v-1.db'
+    db_comp  = './data/ac-comp_v-1.db'
+
+    connec_dev = sqlite3.connect(db_dev)
+    connec_comp = sqlite3.connect(db_comp)
+
     disp = read_cleaned_csv("disp")
     client = read_cleaned_csv("client")
     card = read_cleaned_csv("card")
+    
+    card_dev = pd.read_sql_query("SELECT * FROM card", connec_dev)
+    card_comp = pd.read_sql_query("SELECT * FROM card", connec_comp)
 
-    # Reading all the tables
-    loan_dev = read_preprocessed_csv("loan_dev")
-    loan_comp = read_preprocessed_csv("loan_comp")
+    account = pd.read_sql_query("SELECT * FROM account", connec_dev)
+
+    loan_dev = pd.read_sql_query("SELECT * FROM loan", connec_dev)
+    loan_comp = pd.read_sql_query("SELECT * FROM loan", connec_comp)
 
     trans_comp = read_cleaned_csv("trans_comp")
     trans_dev = read_cleaned_csv("trans_dev")
 
-    account = read_preprocessed_csv("account")
     loan_merged = []
 
     # Merging other tables with the loan_dev and loan_comp
