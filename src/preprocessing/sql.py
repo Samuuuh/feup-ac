@@ -47,7 +47,7 @@ def init_db():
     birthnumber INTEGER);''')
 
   contents = csv.reader(open('./data/raw/client.csv'), delimiter=';')
-  insert_records = "INSERT INTO client(client_id, district_id, birthnumber) VALUES(?, ?, ?)"
+  insert_records = "INSERT INTO client(client_id, birthnumber, district_id) VALUES(?, ?, ?)"
 
   insert = []
   for i, row in enumerate(contents):
@@ -74,7 +74,7 @@ def init_db():
   cursor.execute("DROP TABLE IF EXISTS district")
   cursor.execute('''CREATE TABLE district (
     id INTEGER PRIMARY KEY,
-    name VARCHAR(255),
+    city VARCHAR(255),
     region  VARCHAR(255),
     num_inhab INTEGER,
     num_municip_inhab_0_499 INTEGER,
@@ -91,7 +91,7 @@ def init_db():
     num_crimes_96 INTEGER);''')
 
   contents = csv.reader(open('./data/raw/district.csv'), delimiter=';')
-  insert_records = "INSERT INTO district(id, name, region, num_inhab, num_municip_inhab_0_499, num_municip_inhab_500_1999, \
+  insert_records = "INSERT INTO district(id, city, region, num_inhab, num_municip_inhab_0_499, num_municip_inhab_500_1999, \
     num_municip_inhab_2000_9999, num_municip_inhab_10000_, num_cities, perc_urban_inhab, avg_salary, perc_unemploy_95, \
     perc_unemploy_96, enterp_per_1000, num_crimes_95, num_crimes_96) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
@@ -118,13 +118,14 @@ def init_db():
     status INTEGER);''')
 
   contents = csv.reader(open('./data/raw/loan_dev.csv'), delimiter=';')
-  insert_records = "INSERT INTO district(loan_id, account_id, date, amount, duration, payments, status) \
+  insert_records = "INSERT INTO loan(loan_id, account_id, date, amount, duration, payments, status) \
       VALUES (?, ?, ?, ?, ?, ?, ?)"
 
   insert = []
   for i, row in enumerate(contents):
       if i != 0: 
           insert.append([int(row[0]), int(row[1]), int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6])])
+  cursor.executemany(insert_records, insert)
 
   # -- Table Transactions
   cursor.execute("DROP TABLE IF EXISTS trans")
@@ -141,7 +142,7 @@ def init_db():
     account INTEGER);''')
 
   contents = csv.reader(open('./data/raw/trans_dev.csv'), delimiter=';')
-  insert_records = "INSERT INTO district(trans_id, account_id, date, type, operation, amount, balance, k_symbol, bank, account) \
+  insert_records = "INSERT INTO trans(trans_id, account_id, date, type, operation, amount, balance, k_symbol, bank, account) \
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
   insert = []
@@ -152,6 +153,7 @@ def init_db():
           row[9] = None if row[9] == '' else int(row[9])
 
           insert.append([int(row[0]), int(row[1]), int(row[2]), row[3], row[4], float(row[5]), float(row[6]), row[7], row[8], row[9]])
+  cursor.executemany(insert_records, insert)
 
   connection.commit()
   connection.close()
