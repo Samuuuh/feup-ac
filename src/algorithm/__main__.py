@@ -1,9 +1,9 @@
 import configparser
 import os
 import pandas as pd
-from src.prediction.neural_networks import neural_network_smote
-from src.prediction.random_forest import random_forest
-from src.prediction.random_forest_smote import random_forest_smote
+from .prediction.neural_networks import neural_network_smote
+from .prediction.random_forest import random_forest
+from .prediction.random_forest_smote import random_forest_smote
 
 from src.preprocessing.utils import read_cleaned_csv, read_preprocessed_csv
 
