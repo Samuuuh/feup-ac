@@ -20,9 +20,7 @@ def set_columns(columns, df: pd.DataFrame) -> pd.DataFrame:
     for col in columns:
         if columns.get(col) == "False" and col in df.columns:
             df = df.drop([col], axis=1)
-
     return df
-
 
 def build(parser: configparser.ConfigParser):
     """This function is responsible for building the dataframe of test and train by merging other tables and selecting the chosen attributes.
@@ -35,42 +33,32 @@ def build(parser: configparser.ConfigParser):
     # Reading all the tables
     db_dev = './data/ac-dev_v-1.db'
     db_comp  = './data/ac-comp_v-1.db'
-
     connec_dev = sqlite3.connect(db_dev)
     connec_comp = sqlite3.connect(db_comp)
 
-    disp = read_cleaned_csv("disp")
-    client = read_cleaned_csv("client")
-    card = read_cleaned_csv("card")
-    
+    # -- Get Collumns
+    account = pd.read_sql_query("SELECT * FROM account", connec_dev)
+
     card_dev = pd.read_sql_query("SELECT * FROM card", connec_dev)
     card_comp = pd.read_sql_query("SELECT * FROM card", connec_comp)
 
-    account = pd.read_sql_query("SELECT * FROM account", connec_dev)
-
+    client = pd.read_sql_query("SELECT * FROM client", connec_dev)
+    disp = pd.read_sql_query("SELECT * FROM disp", connec_dev)
+    district = pd.read_sql_query("SELECT * FROM district", connec_dev)
+    
     loan_dev = pd.read_sql_query("SELECT * FROM loan", connec_dev)
     loan_comp = pd.read_sql_query("SELECT * FROM loan", connec_comp)
 
     trans_comp = read_cleaned_csv("trans_comp")
     trans_dev = read_cleaned_csv("trans_dev")
 
-    loan_merged = []
+    # --- Merge Everythings
+    features_dev = 0
+    features_comp = 0
 
-    # Merging other tables with the loan_dev and loan_comp
-    for i, loan in enumerate([loan_dev, loan_comp]):
-        
-        df = pd.merge(loan, account, on="account_id", how="left", suffixes=("_acc", "_loan"))    # Merge loan
-        df = pd.merge(df, disp, on='account_id', how="inner")
-        df = pd.merge(df, client, on="client_id", how="inner")
-        df = pd.merge(df, card, on="disp_id", how="left")
-        if i == 0:
-            df = pd.merge(df, trans_dev, on="account_id", how="inner")
-        else:
-            df = pd.merge(df, trans_comp, on="account_id", how="inner")
+    exit(-1)
 
-        df = set_columns(parser['attributes'], df)                                          # Remove columns
-        loan_merged.append(df)
-    return loan_merged
+    return [features_dev, features_comp]
 
 
 def call_model(parser: configparser.ConfigParser, dev: pd.DataFrame, comp: pd.DataFrame) -> None:
