@@ -6,7 +6,7 @@ import sqlite3
 
 from numpy import NaN
 
-from .sql import init_db
+from .sql import init_dev_db, init_comp_db
 from .utils import read_csv, write_csv
 
 def split_date_sql(date):
@@ -16,31 +16,7 @@ def split_date_sql(date):
     full_date = f"{year}-{month}-{day}"
     return year, month, day, full_date
 
-def split_date(name_year: str, name_month: str, name_day: str, column_name: str, df: pd.DataFrame,
-               new_column_name: str = None) -> None:
-    df[[name_year, name_month, name_day]] = [list(map(''.join, zip(*[iter(str(date))] * 2))) for date in
-                                             df[column_name]]
-    df[name_year] = df[name_year].astype('int') + 1900
-    df[name_month] = df[name_month].astype('int')
-    df[name_day] = df[name_day].astype('int')
-    del df[column_name]
-
-    if new_column_name is not None:
-        join_date(name_year, name_month, name_day, new_column_name, df)
-
-def join_date(name_year: str, name_month: str, name_day: str, column_name: str, df: pd.DataFrame) -> None:
-    df[column_name] = (df[name_year].astype('str') + '-' + df[name_month].astype('str') + '-' +
-                       df[name_day].astype('str'))
-    df[column_name] = pd.to_datetime(df[column_name])
-
-
-def preprocess(file_name: str, parse_function):
-    df = read_csv(file_name)
-    df = parse_function(df)
-    write_csv(df, file_name, index=False)
-
-def process_account():
-    connection = sqlite3.connect('./data/ac-v01.db')
+def process_account(connection):
     cursor = connection.cursor()
 
     cursor.execute("ALTER TABLE account ADD creation_date VARCHAR(255)")
@@ -57,10 +33,8 @@ def process_account():
         cursor.execute(f"UPDATE account SET creation_date = {fulldate}, creation_year = {year}, creation_month = {month}, creation_day = {day} WHERE account_id = {c_id}")
     
     connection.commit()
-    connection.close()
 
-def process_card():
-    connection = sqlite3.connect('./data/ac-v01.db')
+def process_card(connection):
     cursor = connection.cursor()
 
     cursor.execute("ALTER TABLE card ADD issued_date VARCHAR(255)")
@@ -77,31 +51,8 @@ def process_card():
         cursor.execute(f"UPDATE card SET issued_date = {fulldate}, issued_year = {year}, issued_month = {month}, issued_day = {day} WHERE card_id = {card_id}")
     
     connection.commit()
-    connection.close()
 
-
-def read_client() -> None:
-    def parse_data(df: pd.DataFrame) -> pd.DataFrame:
-        # Separating the birth number into day, month and year
-        df.birth_number = df.birth_number.astype('str')
-        df["birthdate_year"] = 1900 + df.birth_number.str[:2].astype('int')
-        df["birthdate_month"] = df.birth_number.str[2:4].astype('int')
-        df["birthdate_day"] = df.birth_number.str[4:].astype('int')
-
-        # The month was added by 50 for women, we are going to revert that and add a sex attribute
-        df["sex"] = np.where(df.birthdate_month > 12, 'f', 'm')
-        df.loc[df.sex == 'f', "birthdate_month"] = df.birthdate_month - 50
-
-        # Creating a birthdate column as a datetime
-        join_date("birthdate_year", "birthdate_month", "birthdate_day", "birthdate", df)
-
-        # Removing the now useless column birth_number
-        return df.drop(columns=["birth_number"])
-
-    preprocess("client", parse_data)
-
-def process_client():
-    connection = sqlite3.connect('./data/ac-v01.db')
+def process_client(connection):
     cursor = connection.cursor()
 
     cursor.execute("ALTER TABLE client ADD birthdate VARCHAR(255)")
@@ -129,19 +80,14 @@ def process_client():
         cursor.execute(f"UPDATE client SET birthdate = '{birthdate}', birthdate_year = {year}, birthdate_month = {month}, birthdate_day = '{day}', sex = '{genre}'WHERE client_id = {client_id}")
     
     connection.commit()
-    connection.close()
 
 
-def process_disposition():
-    connection = sqlite3.connect('./data/ac-v01.db')
+def process_disposition(connection):
     cursor = connection.cursor()
-
     cursor.execute("UPDATE disp SET type = LOWER(type)")
     connection.commit()
-    connection.close()
 
-def process_district():
-    connection = sqlite3.connect('./data/ac-v01.db')
+def process_district(connection):
     cursor = connection.cursor()
 
     cursor.execute("ALTER TABLE district ADD region_direction VARCHAR(255)")
@@ -158,10 +104,8 @@ def process_district():
         cursor.execute(f"UPDATE district SET region_direction = '{direction}', region = '{region}', city = '{name}' WHERE id = {district_id}")
     
     connection.commit()
-    connection.close()
 
-def process_loan():
-    connection = sqlite3.connect('./data/ac-v01.db')
+def process_loan(connection):
     cursor = connection.cursor()
 
     cursor.execute("ALTER TABLE loan ADD loan_date VARCHAR(255)")
@@ -178,10 +122,8 @@ def process_loan():
         cursor.execute(f"UPDATE loan SET loan_date = {fulldate}, loan_year = {year}, loan_month = {month}, loan_day = {day} WHERE loan_id = {loan_id}")
     
     connection.commit()
-    connection.close()
 
-def process_transaction():
-    connection = sqlite3.connect('./data/ac-v01.db')
+def process_transaction(connection):
     cursor = connection.cursor()
 
     cursor.execute("ALTER TABLE trans ADD trans_date VARCHAR(255)")
@@ -212,15 +154,20 @@ def process_transaction():
         cursor.execute(f"UPDATE trans SET operation = '{operation}', trans_date = {fulldate}, trans_year = {year}, trans_month = {month}, trans_day = {day} WHERE trans_id = {trans_id}")
     
     connection.commit()
-    connection.close()
 
 if __name__ == "__main__":
-    init_db()
-    
-    process_account()
-    process_card()
-    process_client()
-    process_disposition()
-    process_district()
-    process_loan()
-    process_transaction()
+    v = 1
+    init_dev_db(v)
+    db_dev = f'./data/ac-dev_v-{v}.db'
+    connection = sqlite3.connect(db_dev)
+
+    process_account(connection)
+    process_card(connection)
+    process_client(connection)
+    process_disposition(connection)
+    process_district(connection)
+    process_loan(connection)
+    process_transaction(connection)
+    connection.close()
+
+    #db_comp  = f'./data/ac-comp_v-{v}.db'
