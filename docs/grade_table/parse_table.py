@@ -46,9 +46,6 @@ def get_status_tds(td: bs, checked: str):
         return text + "[x]"
     return text
 
-
-
-
 if __name__ == '__main__':
     soup = read_table()
     print(translate_table(soup))

@@ -3,6 +3,8 @@ from collections.abc import Callable
 import numpy as np
 import pandas as pd
 from numpy import NaN
+
+from .sql import init_db
 from .utils import read_csv, write_csv
 
 
@@ -148,6 +150,8 @@ def read_transaction() -> None:
 
 
 if __name__ == "__main__":
+    init_db()
+    
     read_account()
     read_card()
     read_client()
