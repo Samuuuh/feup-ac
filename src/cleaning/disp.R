@@ -1,5 +1,8 @@
+library(RSQLite)
+library(DBI)
 
-disp <- read.delim("data/preprocessed/disp.csv", sep=";")
+con <- dbConnect(RSQLite::SQLite(), "data/ac-dev_v-1.db")
+disp <- dbGetQuery(con, "SELECT * FROM disp")
 
 # Just use owners.
 disp<-disp[disp$type == 'owner', ]

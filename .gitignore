@@ -6,8 +6,11 @@ data_env/*
 **/__pycache__
 
 # Generated files
+data/models/*
 data/cleaned/*
 data/preprocessed/*
 data/submission/*
 data/ac-v01.db
+src/algorithm/cleaning/.*
+**/*.Rproj
 Rplots.pdf

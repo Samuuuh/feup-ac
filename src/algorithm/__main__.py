@@ -5,22 +5,24 @@ import sys
 
 from .consts import ModelType
 from .logger import Logger
-from .prediction.k_means import k_means
 from .prediction.grid_log_regression import grid_log_regression
+from .prediction.k_means import k_means
 from .prediction.log_regression import log_regression
 from .prediction.neural_networks import neural_network_smote
 from .prediction.random_forest import random_forest
 from .prediction.random_forest_smote import random_forest_smote
 from .prediction.tree_classifier import tree_classifier
-from .preprocessing.utils import read_cleaned_csv, read_preprocessed_csv
+from ..preprocessing.utils import read_cleaned_csv, read_preprocessed_csv
 
 import sqlite3
+
 
 def set_columns(columns, df: pd.DataFrame) -> pd.DataFrame:
     for col in columns:
         if columns.get(col) == "False" and col in df.columns:
             df = df.drop([col], axis=1)
     return df
+
 
 def build(parser: configparser.ConfigParser):
     """This function is responsible for building the dataframe of test and train by merging other tables and selecting the chosen attributes.
@@ -31,34 +33,47 @@ def build(parser: configparser.ConfigParser):
     Logger.print_info("Getting tables...")
 
     # Reading all the tables
+    # -- Get Collumns
     db_dev = './data/ac-dev_v-1.db'
-    db_comp  = './data/ac-comp_v-1.db'
+    db_comp = './data/ac-comp_v-1.db'
     connec_dev = sqlite3.connect(db_dev)
     connec_comp = sqlite3.connect(db_comp)
 
-    # -- Get Collumns
-    account = pd.read_sql_query("SELECT * FROM account", connec_dev)
-
-    card_dev = pd.read_sql_query("SELECT * FROM card", connec_dev)
-    card_comp = pd.read_sql_query("SELECT * FROM card", connec_comp)
-
-    client = pd.read_sql_query("SELECT * FROM client", connec_dev)
-    disp = pd.read_sql_query("SELECT * FROM disp", connec_dev)
-    district = pd.read_sql_query("SELECT * FROM district", connec_dev)
-
-    loan_dev = pd.read_sql_query("SELECT * FROM loan", connec_dev)
-    loan_comp = pd.read_sql_query("SELECT * FROM loan", connec_comp)
-
+    card = read_cleaned_csv("card")
+    client = read_cleaned_csv("client")
+    disp = read_cleaned_csv("disp")
+    dist = read_cleaned_csv("dist")
     trans_comp = read_cleaned_csv("trans_comp")
     trans_dev = read_cleaned_csv("trans_dev")
 
-    # --- Merge Everythings
-    features_dev = 0
-    features_comp = 0
+    # Reading all the tables that dont need cleaning
+    loan_dev = pd.read_sql_query("SELECT * FROM loan", connec_dev)
+    loan_comp = pd.read_sql_query("SELECT * FROM loan", connec_comp)
+    account = pd.read_sql_query("SELECT * FROM account", connec_comp)
 
-    exit(-1)
+    loan_merged = []
 
-    return [features_dev, features_comp]
+    # Merging other tables with the loan_dev and loan_comp
+    for i, loan in enumerate([loan_dev, loan_comp]):
+        client_dist = pd.merge(client, dist, left_on='district_id',
+                               right_on='district_id', suffixes=("_client", "_dist"))
+
+        df = pd.merge(loan, account, on="account_id", how="left",
+                      suffixes=("_acc", "_loan"))    # Merge loan
+        df = pd.merge(df, disp, on='account_id', how="inner")
+
+        df = pd.merge(df, client_dist, on="client_id", how="inner")
+        df = pd.merge(df, card, on="disp_id", how="left")
+        if i == 0:
+            df = pd.merge(df, trans_dev, on="account_id", how="inner")
+        else:
+            df = pd.merge(df, trans_comp, on="account_id", how="inner")
+
+        # Remove columns
+        df = set_columns(parser['attributes'], df)
+        loan_merged.append(df)
+
+    return loan_merged
 
 
 def call_model(parser: configparser.ConfigParser, dev: pd.DataFrame, comp: pd.DataFrame) -> None:
@@ -96,9 +111,9 @@ def convert_status(df: pd.DataFrame):
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        path = "/../config/config.ini"
+        path = "/../../config/config.ini"
     else:
-        path = "/../" + sys.argv[1]
+        path = "/../../" + sys.argv[1]
     filepath = os.path.dirname(os.path.abspath(__file__)) + path
 
     if os.path.isfile(filepath):
