@@ -58,7 +58,7 @@ def build(parser: configparser.ConfigParser):
     # Merging other tables with the loan_dev and loan_comp
     for i, loan in enumerate([loan_dev, loan_comp]):
         client_dist = pd.merge(client, dist, left_on='district_id',
-                               right_on='district_id', suffixes=("_client", "_dist"))
+                               right_on='id', suffixes=("_client", "_dist"))
 
         df = pd.merge(loan, account, on="account_id", how="left",
                       suffixes=("_acc", "_loan"))    # Merge loan

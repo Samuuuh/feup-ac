@@ -30,8 +30,8 @@ def process_account(connection):
     for tup in values:
         c_id = tup[0]
         year, month, day, fulldate = split_date_sql(tup[1])
-        cursor.execute(f"UPDATE account SET creation_date = {fulldate}, creation_year = {year}, creation_month = {month}, creation_day = {day} WHERE account_id = {c_id}")
-    
+        cursor.execute(f"UPDATE account SET creation_date = '{fulldate}', creation_year = {year}, creation_month = {month}, creation_day = {day} WHERE account_id = {c_id}")
+
     connection.commit()
 
 def process_card(connection):
@@ -48,8 +48,8 @@ def process_card(connection):
     for tup in values:
         card_id = tup[0]
         year, month, day, fulldate = split_date_sql(tup[1])
-        cursor.execute(f"UPDATE card SET issued_date = {fulldate}, issued_year = {year}, issued_month = {month}, issued_day = {day} WHERE card_id = {card_id}")
-    
+        cursor.execute(f"UPDATE card SET issued_date = '{fulldate}', issued_year = {year}, issued_month = {month}, issued_day = {day} WHERE card_id = {card_id}")
+
     connection.commit()
 
 def process_client(connection):
@@ -72,13 +72,13 @@ def process_client(connection):
         day = int(str(tup[1])[4:])
         if month > 12:
             month - 50
-            genre = 'f' 
+            genre = 'f'
         else:
             genre = 'm'
 
         birthdate = f"{year}-{month}-{day}"
         cursor.execute(f"UPDATE client SET birthdate = '{birthdate}', birthdate_year = {year}, birthdate_month = {month}, birthdate_day = '{day}', sex = '{genre}'WHERE client_id = {client_id}")
-    
+
     connection.commit()
 
 
@@ -100,9 +100,9 @@ def process_district(connection):
         direction = tup[1].split(" ")[0] if tup[1].find(" ") != -1 else "NULL"
         region = tup[1].split(" ")[1] if tup[1].find(" ") != -1 else tup[1]
         name = tup[2].split(" - ")[0] if tup[2].find(" - ") != -1 else tup[2]
-        
+
         cursor.execute(f"UPDATE district SET region_direction = '{direction}', region = '{region}', city = '{name}' WHERE id = {district_id}")
-    
+
     connection.commit()
 
 def process_loan(connection):
@@ -119,8 +119,8 @@ def process_loan(connection):
     for tup in values:
         loan_id = tup[0]
         year, month, day, fulldate = split_date_sql(tup[1])
-        cursor.execute(f"UPDATE loan SET loan_date = {fulldate}, loan_year = {year}, loan_month = {month}, loan_day = {day} WHERE loan_id = {loan_id}")
-    
+        cursor.execute(f"UPDATE loan SET loan_date = '{fulldate}', loan_year = {year}, loan_month = {month}, loan_day = {day} WHERE loan_id = {loan_id}")
+
     connection.commit()
 
 def process_transaction(connection):
@@ -151,8 +151,8 @@ def process_transaction(connection):
             operation = 'NULL'
         else:
             operation = dict_map[operation]
-        cursor.execute(f"UPDATE trans SET operation = '{operation}', trans_date = {fulldate}, trans_year = {year}, trans_month = {month}, trans_day = {day} WHERE trans_id = {trans_id}")
-    
+        cursor.execute(f"UPDATE trans SET operation = '{operation}', trans_date = '{fulldate}', trans_year = {year}, trans_month = {month}, trans_day = {day} WHERE trans_id = {trans_id}")
+
     connection.commit()
 
 if __name__ == "__main__":
@@ -181,4 +181,3 @@ if __name__ == "__main__":
     process_district(connection)
     process_loan(connection)
     process_transaction(connection)
-
