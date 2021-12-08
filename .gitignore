@@ -9,4 +9,5 @@ data_env/*
 data/cleaned/*
 data/preprocessed/*
 data/submission/*
+data/ac-v01.db
 Rplots.pdf
