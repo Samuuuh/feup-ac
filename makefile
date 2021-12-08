@@ -3,8 +3,6 @@ R = Rscript
 
 .PHONY: all clean preprocess_ clean_
 
-
-
 r_filepath = ./src/cleaning/
 r_files = card.R client.R disp.R district.R trans.R
 r_executables = $(addprefix $(r_filepath), $(r_files))
@@ -22,7 +20,6 @@ clean_:
 
 submit_:
 	$(PYTHON) -m src
-
 
 clean:
 	@echo "Removing preprocessed files"
