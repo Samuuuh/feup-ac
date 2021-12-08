@@ -19,15 +19,13 @@ def grid_log_regression(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool
     # Other types of validation. three-fold-validation, for example. 
     log_reg = LogisticRegression()
     cross_validation = KFold()
-    parameter_grid={"C": np.logspace(-3,-3, 7), "penalty": ["l2"]} 
-
+    parameter_grid={"C": np.logspace(-3,-3, 7), "penalty": ["l2"]}
     grid_search = GridSearchCV(
         log_reg,
         param_grid = parameter_grid,
         cv = cross_validation,
         scoring='roc_auc'
     )
-
     grid_search.fit(x, y.values.ravel())
 
     # Apply training

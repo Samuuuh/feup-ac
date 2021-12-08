@@ -11,7 +11,7 @@ loan <- dbGetQuery(con_dev, "SELECT * FROM loan")
 disp <- dbGetQuery(con_dev, "SELECT * FROM disp")
 
 client$birthdate <- NULL
-client$sex<-unclass(as.factor(client$sex)) 
+client$sex<-unclass(as.factor(client$sex))
 #client$district_id<-NULL
 
 # Merge
@@ -19,11 +19,11 @@ merged <- merge(client, disp, by="client_id")
 merged <- merge(merged, loan, by="account_id", suffixes=c("_client"))
 
 # Sex from categorical to numerical.
-merged$sex<-unclass(as.factor(merged$sex)) 
+merged$sex<-unclass(as.factor(merged$sex))
 merged$type<-unclass(as.factor(merged$type))
 
-# TODO: add to markdown 
-# cor.test(merged$sex, merged$status) 
+# TODO: add to markdown
+# cor.test(merged$sex, merged$status)
 
 
 # Drop columns
@@ -37,6 +37,5 @@ merged$loan_day<-NULL
 merged$loan_month<-NULL
 merged$disp_id<-NULL
 
-# Analysis 
+# Analysis
 write.csv(client, file="data/cleaned/client.csv", row.names = FALSE) 
-

@@ -22,8 +22,6 @@ def tree_classifier(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) ->
         predicted = log_reg.predict_proba(get_x(test))[::, 1]
         expected  = get_y(test)
         print(f"score {roc_auc_score(expected, predicted)}")
-    else: 
-        pred_competition = log_reg.predict_proba(get_x(df_comp))   
+    else:
+        pred_competition = log_reg.predict_proba(get_x(df_comp))
         save_result(df_comp['loan_id'], pred_competition[::, 1], 'grid_log_reg')
-
-

@@ -1,6 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import pickle 
+import pickle
 
 def get_x(df: pd.DataFrame) -> None:
     condition = (df.columns != 'status') & (df.columns != 'account_id') & (df.columns != 'loan_id') & (

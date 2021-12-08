@@ -1,11 +1,13 @@
 from enum import Enum
 
+
 class ModelType:
-    LOG_REGRESSION = "LogisticRegression"
     GRID_LOG_REGRESSION = "GridLogisticRegression"
-    TREE_CLASSIFIER = "TreeClassifier"
+    K_MEANS = "KMeans"
+    LOG_REGRESSION = "LogisticRegression"
     RANDOM_FOREST = "RandomForest"
-    RANDOM_FOREST_SMOTE = "RandomForestSmote" 
+    RANDOM_FOREST_COMPLETE = "RandomForestComplete"  # Contains kbest, grid and smote
+    RANDOM_FOREST_SMOTE = "RandomForestSmote"
     NEURAL_NETWORK_SMOTE = "NeuralNetworkSmote"
-    RANDOM_FOREST_COMPLETE = "RandomForestComplete" # Contains kbest, grid and smote
     SVM = "Svm"
+    TREE_CLASSIFIER = "TreeClassifier"

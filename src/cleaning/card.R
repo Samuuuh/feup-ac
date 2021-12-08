@@ -22,11 +22,11 @@ card_merge$type_card[is.na(card_merge$type_card)] <- "other"
 card_merge$is_junior[card_merge$type_card == "junior"] <- 1
 card_merge$is_junior[card_merge$type_card != "junior"] <- 0
 
-# Create is gold 
+# Create is gold
 card_merge$is_gold[card_merge$type_card == "gold"] <- 1
 card_merge$is_gold[card_merge$type_card != "gold"] <- 0
 
-#Create is classic 
+#Create is classic
 card_merge$is_classic[card_merge$type_card == "classic"] <- 1
 card_merge$is_classic[card_merge$type_card != "classic"] <- 0
 

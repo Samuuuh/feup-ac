@@ -30,7 +30,7 @@ def process_account(connection):
     for tup in values:
         c_id = tup[0]
         year, month, day, fulldate = split_date_sql(tup[1])
-        cursor.execute(f"UPDATE account SET creation_date = '{fulldate}', creation_year = {year}, creation_month = {month}, creation_day = {day} WHERE account_id = {c_id}")
+        cursor.execute(f"UPDATE account SET creation_date = {fulldate}, creation_year = {year}, creation_month = {month}, creation_day = {day} WHERE account_id = {c_id}")
     
     connection.commit()
 
@@ -48,7 +48,7 @@ def process_card(connection):
     for tup in values:
         card_id = tup[0]
         year, month, day, fulldate = split_date_sql(tup[1])
-        cursor.execute(f"UPDATE card SET issued_date = '{fulldate}', issued_year = {year}, issued_month = {month}, issued_day = {day} WHERE card_id = {card_id}")
+        cursor.execute(f"UPDATE card SET issued_date = {fulldate}, issued_year = {year}, issued_month = {month}, issued_day = {day} WHERE card_id = {card_id}")
     
     connection.commit()
 
@@ -119,7 +119,7 @@ def process_loan(connection):
     for tup in values:
         loan_id = tup[0]
         year, month, day, fulldate = split_date_sql(tup[1])
-        cursor.execute(f"UPDATE loan SET loan_date = '{fulldate}', loan_year = {year}, loan_month = {month}, loan_day = {day} WHERE loan_id = {loan_id}")
+        cursor.execute(f"UPDATE loan SET loan_date = {fulldate}, loan_year = {year}, loan_month = {month}, loan_day = {day} WHERE loan_id = {loan_id}")
     
     connection.commit()
 
@@ -151,7 +151,7 @@ def process_transaction(connection):
             operation = 'NULL'
         else:
             operation = dict_map[operation]
-        cursor.execute(f"UPDATE trans SET operation = '{operation}', trans_date = '{fulldate}', trans_year = {year}, trans_month = {month}, trans_day = {day} WHERE trans_id = {trans_id}")
+        cursor.execute(f"UPDATE trans SET operation = '{operation}', trans_date = {fulldate}, trans_year = {year}, trans_month = {month}, trans_day = {day} WHERE trans_id = {trans_id}")
     
     connection.commit()
 
