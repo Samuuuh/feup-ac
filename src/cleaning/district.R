@@ -2,12 +2,13 @@
 library(dplyr)
 library(ggplot2)
 library(ggpubr)
+library(RSQLite)
+library(DBI)
 
-# Instructions: set the directory workdirectory in the filepath.
-dist<-read.delim("data/preprocessed/district.csv", sep=";")
+con <- dbConnect(RSQLite::SQLite(), "data/ac-dev_v-1.db")
+dist <- dbGetQuery(con, "SELECT * FROM district")
 
 # OUTLIERS ====================================================================
-
 # we can see that the south region contains a outlier, with 100% of urban inhab. 
 ggplot(dist, aes(region, perc_urban_inhab)) + geom_boxplot() +
   ggtitle("Distribution of perc_urban_inhab per season")

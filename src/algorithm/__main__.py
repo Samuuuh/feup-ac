@@ -1,19 +1,22 @@
 import configparser
 import os
 import pandas as pd
+from sklearn import svm
+
+from .prediction.random_forest_smote_kbest import random_forest_smote_kbest
 from .prediction.neural_networks import neural_network_smote
 from .prediction.random_forest import random_forest
 from .prediction.random_forest_smote import random_forest_smote
+from .prediction.grid_log_regression import grid_log_regression
+from .prediction.log_regression import log_regression
+from .prediction.tree_classifier import tree_classifier
+from .prediction.svm import svm_model
+
 
 from src.preprocessing.utils import read_cleaned_csv, read_preprocessed_csv
 
 from .consts import ModelType
 from .logger import Logger
-
-from .prediction.grid_log_regression import grid_log_regression
-from .prediction.log_regression import log_regression
-from .prediction.tree_classifier import tree_classifier
-
 import sqlite3
 
 def set_columns(columns, df: pd.DataFrame) -> pd.DataFrame:
@@ -31,34 +34,47 @@ def build(parser: configparser.ConfigParser):
     Logger.print_info("Getting tables...")
 
     # Reading all the tables
+    # -- Get Collumns
     db_dev = './data/ac-dev_v-1.db'
     db_comp  = './data/ac-comp_v-1.db'
     connec_dev = sqlite3.connect(db_dev)
     connec_comp = sqlite3.connect(db_comp)
 
-    # -- Get Collumns
-    account = pd.read_sql_query("SELECT * FROM account", connec_dev)
-
-    card_dev = pd.read_sql_query("SELECT * FROM card", connec_dev)
-    card_comp = pd.read_sql_query("SELECT * FROM card", connec_comp)
-
-    client = pd.read_sql_query("SELECT * FROM client", connec_dev)
-    disp = pd.read_sql_query("SELECT * FROM disp", connec_dev)
-    district = pd.read_sql_query("SELECT * FROM district", connec_dev)
-    
-    loan_dev = pd.read_sql_query("SELECT * FROM loan", connec_dev)
-    loan_comp = pd.read_sql_query("SELECT * FROM loan", connec_comp)
-
+    card = read_cleaned_csv("card")
+    client = read_cleaned_csv("client")
+    disp = read_cleaned_csv("disp")
+    dist = read_cleaned_csv("dist")
     trans_comp = read_cleaned_csv("trans_comp")
     trans_dev = read_cleaned_csv("trans_dev")
 
-    # --- Merge Everythings
-    features_dev = 0
-    features_comp = 0
+    # Reading all the tables that dont need cleaning
+    loan_dev = pd.read_sql_query("SELECT * FROM loan", connec_dev)
+    loan_comp = pd.read_sql_query("SELECT * FROM loan", connec_comp)
+    account = pd.read_sql_query("SELECT * FROM account", connec_comp)
 
-    exit(-1)
+    loan_merged = []
 
-    return [features_dev, features_comp]
+    # Merging other tables with the loan_dev and loan_comp
+    for i, loan in enumerate([loan_dev, loan_comp]):
+        client_dist = pd.merge(client, dist, left_on='district_id', right_on='id', suffixes=("_client", "_dist"))
+
+        df = pd.merge(loan, account, on="account_id", how="left", suffixes=("_acc", "_loan"))    # Merge loan
+        df = pd.merge(df, disp, on='account_id', how="inner")
+        
+        df = pd.merge(df, client_dist, on="client_id", how="inner")
+        df = pd.merge(df, card, on="disp_id", how="left")
+        if i == 0:
+            df = pd.merge(df, trans_dev, on="account_id", how="inner")
+        else:
+            df = pd.merge(df, trans_comp, on="account_id", how="inner")
+
+        df = set_columns(parser['attributes'], df)                                          # Remove columns
+        loan_merged.append(df)
+    
+    
+    
+
+    return loan_merged
 
 
 def call_model(parser: configparser.ConfigParser, dev: pd.DataFrame, comp: pd.DataFrame) -> None:
@@ -79,6 +95,10 @@ def call_model(parser: configparser.ConfigParser, dev: pd.DataFrame, comp: pd.Da
         random_forest_smote(dev, comp, debug_mode) 
     elif model == ModelType.NEURAL_NETWORK_SMOTE: 
         neural_network_smote(dev, comp, debug_mode)
+    elif model == ModelType.RANDOM_FOREST_COMPLETE:
+        random_forest_smote_kbest(dev, comp, debug_mode) 
+    elif model == ModelType.SVM:
+        svm_model(dev, comp, debug_mode)
     else:
         Logger.print_err(f"{model} is not a valid model!")
 
