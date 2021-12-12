@@ -1,6 +1,8 @@
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 import pandas as pd
+import time
+
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score
 from imblearn.over_sampling import SMOTE
@@ -10,6 +12,8 @@ from sklearn.feature_selection import SelectKBest, f_classif
 # Robust against outliers.
 # Highly correlated variables may distort te random forest.
 def random_forest_smote_kbest(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) -> None:
+    start = time.time()
+
     n_estimators  = [100, 300, 500, 800, 1200]
     max_depth = [5, 8, 15, 30]
     min_samples_split = [2, 5, 10, 15, 100]
@@ -44,6 +48,7 @@ def random_forest_smote_kbest(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug
     expected = y_test
 
     print(f"score {roc_auc_score(expected.values, predicted)}")
+    print(f"Time elapsed: {end - start}")
     print_feature_importance(clf.best_estimator_.feature_importances_, x_train.columns[(cols)])
 
     if not debug:

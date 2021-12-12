@@ -1,6 +1,8 @@
 from sklearn.svm import SVC
 from sklearn.pipeline import make_pipeline
 import pandas as pd
+import time
+
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score
 from sklearn.preprocessing import StandardScaler
@@ -10,6 +12,8 @@ from sklearn.feature_selection import SelectKBest, f_classif
 
 
 def svm_model(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) -> None:
+    start = time.time()
+
     x = get_x(df_dev)
     y = get_y(df_dev)
     k_best = SelectKBest(f_classif, k=7)
@@ -36,6 +40,7 @@ def svm_model(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) -> None:
     expected = y_test
 
     print(f"score {roc_auc_score(expected.values, predicted)}")
+    print(f"Time elapsed: {end - start}")
     if not debug:
         x_comp = get_x(df_comp).iloc[:, cols]
         pred_competition = clf.predict_proba(x_comp)
