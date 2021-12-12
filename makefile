@@ -19,7 +19,7 @@ clean_:
 	done
 
 submit_:
-	$(PYTHON) -m src
+	$(PYTHON) -m src.algorithm
 
 clean:
 	@echo "Removing preprocessed files"
