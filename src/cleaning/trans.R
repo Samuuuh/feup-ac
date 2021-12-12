@@ -40,6 +40,14 @@ treat_data <- function(df){
   df$k_symbol[df$k_symbol == ""]<-"other"
   df$bank[df$bank == ""]<-"other"
 
+  df$k_symbol[df$k_symbol == " "] <- "none"
+  df$k_symbol[is.na(df$k_symbol)] <- "none"
+
+  df$symbol_none[df$k_symbol == "none"]
+
+  df$symbol_sanction[df$k_symbol == "sanction interest if negative balance"] <- 1
+  df$symbol_sanction[df$k_symbol != "sanction interest if negative balance"] <- 0
+
   return(df)
 }
 
@@ -76,7 +84,7 @@ ggplot(trans, aes(x=trans$operation)) + geom_bar() + ggtitle("Operations count")
 
     only_na_table<-df %>%
       group_by(account_id) %>%
-      summarise(only_na_account=min(is_na))
+      summarise(only_na_account=min(is_na), type_sanction=sum(symbol_sanction))
 
     df <- merge(df, only_na_table, by="account_id")
     return (df)
@@ -148,10 +156,10 @@ ggplot(trans, aes(x=trans$operation)) + geom_bar() + ggtitle("Operations count")
     temp<- temp[merged$diff_month < m, ]
 
     # Let's check the balance during this period.
-    temp<-temp[c('account_id', 'balance', 'only_na_account')]
+    temp<-temp[c('account_id', 'balance', 'only_na_account', 'type_sanction')]
     temp<-temp %>%
       group_by(account_id, only_na_account) %>%
-      summarise(min_balance=min(balance), mean_balance=mean(balance), max_balance = max(balance))
+      summarise(min_balance=min(balance), mean_balance=mean(balance), max_balance = max(balance), type_saction=sum(type_sanction))
 
     temp <- merge(temp, t, by="account_id")
     return (temp)
