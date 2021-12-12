@@ -1,4 +1,6 @@
 import pandas as pd
+import time
+
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score
@@ -6,6 +8,7 @@ from sklearn.metrics import roc_auc_score
 from .utils import get_x, get_y, save_result
 
 def tree_classifier(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) -> None:
+    start = time.time()
 
     # Divide development data into test and train
     train, test = train_test_split(df_dev, test_size=0.2)
@@ -25,3 +28,4 @@ def tree_classifier(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) ->
     else:
         pred_competition = log_reg.predict_proba(get_x(df_comp))
         save_result(df_comp['loan_id'], pred_competition[::, 1], 'grid_log_reg')
+    print(f"Time elapsed: {end - start}")

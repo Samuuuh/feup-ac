@@ -1,5 +1,7 @@
 from sklearn.ensemble import RandomForestClassifier
 import pandas as pd
+import time
+
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score
 from imblearn.over_sampling import SMOTE
@@ -7,6 +9,7 @@ from imblearn.over_sampling import SMOTE
 from .utils import get_x, get_y, save_result
 
 def random_forest_smote(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) -> None:
+    start = time.time()
 
     df_dev.sort_values(['loan_date'])
     df_dev = df_dev.drop(columns=['loan_date'])
@@ -27,6 +30,7 @@ def random_forest_smote(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool
     expected = y_test
     score = roc_auc_score(expected, predicted)
     print(f"score {score}")
+    print(f"Time elapsed: {end - start}")
 
     if not debug:
         pred_competition = clf.predict_proba(get_x(df_comp))

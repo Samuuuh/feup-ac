@@ -1,5 +1,7 @@
 from sklearn.ensemble import RandomForestClassifier
 import pandas as pd
+import time
+
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score
 from imblearn.over_sampling import SMOTE
@@ -7,6 +9,7 @@ from imblearn.over_sampling import SMOTE
 from .utils import get_x, get_y, save_result
 
 def random_forest(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) -> None:
+    start = time.time()
 
     x = get_x(df_dev)
     y = get_y(df_dev)
@@ -23,3 +26,4 @@ def random_forest(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) -> N
     else:
         pred_competition = clf.predict_proba(get_x(df_comp))
         save_result(df_comp['loan_id'], pred_competition[::, 1], 'random_forest')
+    print(f"Time elapsed: {end - start}")

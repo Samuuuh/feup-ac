@@ -1,5 +1,7 @@
 from sklearn.neural_network import MLPClassifier
 import pandas as pd
+import time
+
 from .utils import get_x, get_y, save_result
 from sklearn.model_selection import train_test_split
 from imblearn.over_sampling import SMOTE
@@ -16,6 +18,7 @@ def transform(arr):
 
 # Perceptron is sensitive to feature scaling, so we scaled our data.
 def neural_network_smote(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) -> None:
+    start = time.time()
 
     x = get_x(df_dev)
     y = get_y(df_dev)
@@ -38,6 +41,7 @@ def neural_network_smote(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: boo
     expected = y_test
 
     print(f"score {roc_auc_score(expected, predicted)}")
+    print(f"Time elapsed: {end - start}")
     print_feature_importance(clf.best_estimator_.feature_importances_, x_train.columns[(cols)])
     if not debug:
         x_comp = scaler.transform(get_x(df_comp))

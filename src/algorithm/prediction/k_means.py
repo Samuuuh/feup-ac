@@ -1,4 +1,6 @@
 import pandas as pd
+import time
+
 from imblearn.over_sampling import SMOTE
 from sklearn.cluster import KMeans
 from sklearn.metrics import roc_auc_score
@@ -9,6 +11,7 @@ from .utils import get_x, get_y, save_result
 
 
 def k_means(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool):
+    start = time.time()
 
     df_dev.sort_values(['loan_date'])
     df_dev = df_dev.drop(columns=['loan_date'])
@@ -44,6 +47,7 @@ def k_means(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool):
         print(predicted)
 
         print(f"score {score}")
+        print(f"Time elapsed: {end - start}")
 
     if not debug:
         pred_competition = estimator.predict(get_x(df_comp))
