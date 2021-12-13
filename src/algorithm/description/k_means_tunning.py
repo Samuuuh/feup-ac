@@ -3,7 +3,7 @@ from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-def k_means(df: pd.DataFrame) -> None:
+def k_means_tunning(df: pd.DataFrame) -> None:
     cluster_train = df[0].loc[:,["amount","min_balance","payments"]]
 
     # Declaring Model

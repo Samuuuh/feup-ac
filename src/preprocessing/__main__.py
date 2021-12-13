@@ -10,6 +10,8 @@ from .sql import init_dev_db, init_comp_db
 from .utils import read_csv, write_csv
 
 def split_date_sql(date):
+    """Transform the date to the standard format yyyy-mm-dd and split in other columns
+    """
     year, month, day = list(map(''.join, zip(*[iter(str(date))] * 2)))
     year = str(int(year) + 1900)
 
@@ -151,7 +153,8 @@ def process_transaction(connection):
             operation = 'NULL'
         else:
             operation = dict_map[operation]
-        cursor.execute(f"UPDATE trans SET operation = '{operation}', trans_date = '{fulldate}', trans_year = {year}, trans_month = {month}, trans_day = {day} WHERE trans_id = {trans_id}")
+        cursor.execute(f"UPDATE trans SET operation = '{operation}', trans_date = '{fulldate}', trans_year = {year}, trans_month = \
+        {month}, trans_day = {day} WHERE trans_id = {trans_id}")
 
     connection.commit()
 
