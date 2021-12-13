@@ -18,7 +18,6 @@ from ..preprocessing.utils import read_cleaned_csv, read_preprocessed_csv
 
 import sqlite3
 
-
 def set_columns(columns, df: pd.DataFrame) -> pd.DataFrame:
     for col in columns:
         if columns.get(col) == "False" and col in df.columns:
@@ -57,11 +56,9 @@ def build(parser: configparser.ConfigParser):
 
     # Merging other tables with the loan_dev and loan_comp
     for i, loan in enumerate([loan_dev, loan_comp]):
-        client_dist = pd.merge(client, dist, left_on='district_id',
-                               right_on='id', suffixes=("_client", "_dist"))
+        client_dist = pd.merge(client, dist, left_on='district_id', right_on='id', suffixes=("_client", "_dist"))
 
-        df = pd.merge(loan, account, on="account_id", how="left",
-                      suffixes=("_acc", "_loan"))    # Merge loan
+        df = pd.merge(loan, account, on="account_id", how="left", suffixes=("_acc", "_loan"))    # Merge loan
         df = pd.merge(df, disp, on='account_id', how="inner")
 
         df = pd.merge(df, client_dist, on="client_id", how="inner")
