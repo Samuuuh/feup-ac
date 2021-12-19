@@ -3,15 +3,17 @@ library(ggplot2)
 library(ggpubr)
 library(RSQLite)
 library(DBI)
+source("./utils.R")
 
 con <- dbConnect(RSQLite::SQLite(), "data/ac-dev_v-1.db")
 dist <- dbGetQuery(con, "SELECT * FROM district")
 
 # OUTLIERS ====================================================================
 # we can see that the south region contains a outlier, with 100% of urban inhab.
-ggplot(dist, aes(region, perc_urban_inhab)) + geom_boxplot() +
-  ggtitle("Distribution of perc_urban_inhab per season")
-
+names(dist)
+show_all_outliers_plot(dist[c("num_inhab", "perc_unemploy_95")])
+show_all_outliers_plot(dist[c("enterp_per_1000", "num_crimes_95")])
+show_all_outliers_plot(dist[c("perc_urban_inhab", "num_cities")])
 
 # MISSING DATA ===============================================================
 

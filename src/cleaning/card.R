@@ -1,6 +1,7 @@
 library("plyr")
 library(RSQLite)
 library(DBI)
+require(tidyr)
 
 con_comp <- dbConnect(RSQLite::SQLite(), "data/ac-comp_v-1.db")
 con_dev <- dbConnect(RSQLite::SQLite(), "data/ac-dev_v-1.db")
@@ -17,18 +18,12 @@ card_merge<-merge(disp, card, by = "disp_id", all.x = TRUE)
 card_merge<-rename(card_merge, c("type" = "type_card"))
 card_merge$type_card[is.na(card_merge$type_card)] <- "other"
 
-# ONE HOT ENCONDING SIMULATION =================================
-# Create is junior
-card_merge$is_junior[card_merge$type_card == "junior"] <- 1
-card_merge$is_junior[card_merge$type_card != "junior"] <- 0
+# ONE HOT ENCONDING =================================
 
-# Create is gold
-card_merge$is_gold[card_merge$type_card == "gold"] <- 1
-card_merge$is_gold[card_merge$type_card != "gold"] <- 0
+card_merge<- one_hot_encoding(card_merge, "type_card")
 
-#Create is classic
-card_merge$is_classic[card_merge$type_card == "classic"] <- 1
-card_merge$is_classic[card_merge$type_card != "classic"] <- 0
+# OUTLIERS ====================================================
+
 
 # OTHER VARIABLES =============================================
 # Add column "has card"

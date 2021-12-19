@@ -1,23 +1,46 @@
 import pandas as pd
+from sklearn import cluster
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from kneed import KneeLocator
 
 def k_means_tunning(df: pd.DataFrame) -> None:
     cluster_train = df[0].loc[:,["amount","min_balance","payments"]]
 
-    # Declaring Model
-    model = KMeans(n_clusters=4)
+    # BEST NUMBER OF CLUSTERINGS (ELBOW) =================================
+    kmeans_kwargs = {
+        "init": "random",
+        "n_init": 10, 
+        "max_iter": 300, 
+        "random_state": 42,
+    } 
+    # A list holds the SSE values for each k 
+    sse = []
+    for k in range(1, 11): 
+        kmeans = KMeans(n_clusters=k, **kmeans_kwargs) 
+        kmeans.fit(cluster_train)
+        sse.append(kmeans.inertia_)
 
-    #X = cluster_train.loc[:,["only_na_account","min_balance"]]
-    # only_na_account
-    # min_balance
+    # Visualize what is the best number of clusterings. 
+    plt.style.use("fivethirtyeight")
+    plt.plot(range(1,11), sse) 
+    plt.xticks(range(1,11))
+    plt.xlabel("Number os Cluster") 
+    plt.ylabel("SSE")
+    plt.show()
 
-    model.fit(cluster_train) # Fitting Model
-    all_predictions = model.predict(cluster_train) # Prediction on the entire data
+    # Getting the best number of clusters. 
+    kl = KneeLocator(range(1,11), sse, curve="convex", direction="decreasing")
+    clusters_number = kl.elbow
+
+    # TRAIN ======================================================
+    kmeans = KMeans(n_clusters=clusters_number, **kmeans_kwargs)
+    all_predictions = kmeans.fit(cluster_train)
 
     X = cluster_train
 
+    # PLOTING ====================================================
     fig = plt.figure(1, figsize=(8, 6))
     ax = Axes3D(fig, elev=-150, azim=110)
     ax.scatter(
@@ -36,10 +59,8 @@ def k_means_tunning(df: pd.DataFrame) -> None:
     ax.w_yaxis.set_ticklabels([])
     ax.set_zlabel("Type Sanction")
     ax.w_zaxis.set_ticklabels([])
-
     plt.show()
 
-    
 
     """
     fig = plt.figure(1, figsize=(8, 6))

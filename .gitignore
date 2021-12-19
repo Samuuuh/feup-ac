@@ -14,3 +14,15 @@ src/algorithm/cleaning/.*
 **/*.Rproj
 **/*.db
 Rplots.pdf
+
+src/cleaning/.Rproj.user/EFB97F21/jobs/
+
+src/cleaning/.Rproj.user/EFB97F21/pcs/files-pane.pper
+
+src/cleaning/.Rproj.user/EFB97F21/pcs/
+
+src/cleaning/.Rproj.user/EFB97F21/rmd-outputs
+
+src/cleaning/.Rproj.user/EFB97F21/
+
+src/cleaning/.Rproj.user/shared/notebooks/patch-chunk-names
