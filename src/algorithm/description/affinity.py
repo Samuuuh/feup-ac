@@ -25,7 +25,7 @@ def affinity(df: pd.DataFrame) -> None:
     fig = plt.figure(1, figsize=(8, 6))
     ax = Axes3D(fig, elev=-150, azim=110)
     ax.scatter(
-        X.birthnumber,
+        X.birthdate_year,
         X.min_balance,
         X.amount,
         c=all_predictions,

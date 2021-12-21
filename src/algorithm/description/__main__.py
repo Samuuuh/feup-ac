@@ -26,8 +26,8 @@ if __name__ == '__main__':
         parser.read(filepath)                       # Get's the config file.
         df = build(parser)                          # Builds the dataframe.
         df[0] = convert_status(df[0])
-        affinity(df)
-        #k_means_tunning(df)
-        #agglomerative_clustering(df)
+        # affinity(df)
+        k_means_tunning(df)
+        # agglomerative_clustering(df)
     else:
         Logger.print_err("No config parser in this folder.")
