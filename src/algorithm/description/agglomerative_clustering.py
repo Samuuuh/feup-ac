@@ -3,15 +3,20 @@ from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.cluster import AgglomerativeClustering
+from sklearn.metrics import silhouette_score
 
 def agglomerative_clustering(df: pd.DataFrame) -> None:
-    df = df[0].loc[:,["amount","min_balance","birthnumber"]]
+    df = df[0].loc[:,["amount","min_balance","birthdate_year"]]
 
     clustering = AgglomerativeClustering().fit(df)
     all_predictions = clustering.labels_
 
     X = df
 
+    # SCORE ===================================================================
+    print(silhouette_score(X, all_predictions, metric='euclidean'))
+
+    # PLOTING =================================================================
     fig = plt.figure(1, figsize=(8, 6))
     ax = Axes3D(fig, elev=-150, azim=110)
     ax.scatter(

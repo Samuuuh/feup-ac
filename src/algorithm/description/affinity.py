@@ -3,11 +3,12 @@ from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.cluster import AffinityPropagation
+from sklearn.metrics import silhouette_score
 import numpy as np
 
 
 def affinity(df: pd.DataFrame) -> None:
-    cluster_train = df[0].loc[:,["amount","min_balance","payments"]]
+    cluster_train = df[0].loc[:,["amount","min_balance","birthdate_year"]]
 
     # Declaring Model
     model = AffinityPropagation(max_iter=300, damping=0.99)
@@ -18,6 +19,10 @@ def affinity(df: pd.DataFrame) -> None:
 
     X = cluster_train
 
+    # SCORE ===================================================================
+    print(silhouette_score(X, all_predictions, metric='euclidean'))
+
+    # PLOTING =================================================================
     fig = plt.figure(1, figsize=(8, 6))
     ax = Axes3D(fig, elev=-150, azim=110)
     ax.scatter(

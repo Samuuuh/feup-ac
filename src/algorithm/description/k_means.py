@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 def k_means(df: pd.DataFrame) -> None:
-    cluster_train = df[0].loc[:,["amount","min_balance","payments"]]
+    cluster_train = df[0].loc[:,["amount","min_balance","birthdate_year"]]
 
     # Declaring Model
     model = KMeans(n_clusters=4)
@@ -39,7 +39,7 @@ def k_means(df: pd.DataFrame) -> None:
 
     plt.show()
 
-    
+
 
     """
     fig = plt.figure(1, figsize=(8, 6))
