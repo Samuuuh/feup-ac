@@ -4,14 +4,15 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import silhouette_score
+from kneed import KneeLocator
 
 def agglomerative_clustering(df: pd.DataFrame) -> None:
-    df = df[0].loc[:,["amount","min_balance","birthdate_year"]]
+    cluster_train = df[0].loc[:,["birthnumber","min_balance","amount"]]
 
-    clustering = AgglomerativeClustering().fit(df)
+    clustering = AgglomerativeClustering(n_clusters=100).fit(cluster_train)
     all_predictions = clustering.labels_
 
-    X = df
+    X = cluster_train
 
     # SCORE ===================================================================
     print(silhouette_score(X, all_predictions, metric='euclidean'))
@@ -20,20 +21,20 @@ def agglomerative_clustering(df: pd.DataFrame) -> None:
     fig = plt.figure(1, figsize=(8, 6))
     ax = Axes3D(fig, elev=-150, azim=110)
     ax.scatter(
-        X.amount,
-        X.min_balance,
         X.birthnumber,
+        X.min_balance,
+        X.amount,
         c=all_predictions,
         cmap=plt.cm.Set1,
         edgecolor="k",
         s=40,
     )
     ax.set_title("First three PCA directions")
-    ax.set_xlabel("Amount")
+    ax.set_xlabel("Birthnumber")
     ax.w_xaxis.set_ticklabels([])
     ax.set_ylabel("Min Balance")
     ax.w_yaxis.set_ticklabels([])
-    ax.set_zlabel("Birthnumber")
+    ax.set_zlabel("Mean Balance")
     ax.w_zaxis.set_ticklabels([])
 
     plt.show()

@@ -17,6 +17,7 @@ def k_means_tunning(df: pd.DataFrame) -> None:
         "max_iter": 300,
         "random_state": 42,
     }
+
     # A list holds the SSE values for each k
     sse = []
     for k in range(1, 11):
@@ -38,7 +39,8 @@ def k_means_tunning(df: pd.DataFrame) -> None:
 
     # TRAIN ===================================================================
     kmeans = KMeans(n_clusters=clusters_number, **kmeans_kwargs)
-    all_predictions = kmeans.fit(cluster_train)
+    kmeans.fit(cluster_train)
+    all_predictions = kmeans.predict(cluster_train)
 
     X = cluster_train
 
@@ -50,9 +52,9 @@ def k_means_tunning(df: pd.DataFrame) -> None:
     fig = plt.figure(1, figsize=(8, 6))
     ax = Axes3D(fig, elev=-150, azim=110)
     ax.scatter(
-        X.amount,
+        X.birthnumber,
         X.min_balance,
-        X.payments,
+        X.amount,
         c=all_predictions,
         cmap=plt.cm.Set1,
         edgecolor="k",
@@ -63,7 +65,7 @@ def k_means_tunning(df: pd.DataFrame) -> None:
     ax.w_xaxis.set_ticklabels([])
     ax.set_ylabel("Min Balance")
     ax.w_yaxis.set_ticklabels([])
-    ax.set_zlabel("Type Sanction")
+    ax.set_zlabel("Birthnumber")
     ax.w_zaxis.set_ticklabels([])
     plt.show()
 
