@@ -2,7 +2,7 @@ from sklearn.neural_network import MLPClassifier
 import pandas as pd
 import time
 
-from .utils import get_x, get_y, save_result
+from .utils import get_x, get_y, print_feature_importance, save_result, save_model, read_model
 from sklearn.model_selection import train_test_split
 from imblearn.over_sampling import SMOTE
 from sklearn.metrics import roc_auc_score
@@ -40,9 +40,10 @@ def neural_network_smote(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: boo
     predicted = transform(clf.predict_proba(x_test)[::, 1])
     expected = y_test
 
+    end = time.time()
     print(f"score {roc_auc_score(expected, predicted)}")
     print(f"Time elapsed: {end - start}")
-    print_feature_importance(clf.best_estimator_.feature_importances_, x_train.columns[(cols)])
+    #print_feature_importance(clf.best_estimator_.feature_importances_, x_train.columns[(cols)])
     if not debug:
         x_comp = scaler.transform(get_x(df_comp))
         pred_competition = clf.predict_proba(x_comp)

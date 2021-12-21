@@ -78,6 +78,7 @@ def build(parser: configparser.ConfigParser):
 def call_model(parser: configparser.ConfigParser, dev: pd.DataFrame, comp: pd.DataFrame) -> None:
     model = parser['settings']['model']
     debug_mode = eval(parser['settings']['debug'])
+    apply_grid = eval(parser['settings']['apply_grid'])
     Logger.print_info(f"Calling model {model}...")
 
     # Call the train models.
@@ -96,7 +97,7 @@ def call_model(parser: configparser.ConfigParser, dev: pd.DataFrame, comp: pd.Da
     elif model == ModelType.NEURAL_NETWORK_SMOTE:
         neural_network_smote(dev, comp, debug_mode)
     elif model == ModelType.RANDOM_FOREST_COMPLETE:
-        random_forest_smote_kbest(dev, comp, debug_mode)
+        random_forest_smote_kbest(dev, comp, debug_mode, apply_grid)
     elif model == ModelType.SVM:
         svm_model(dev, comp, debug_mode)
     else:

@@ -18,6 +18,7 @@ def random_forest(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) -> N
 
     clf = RandomForestClassifier(n_estimators=100, max_depth=30)
     clf.fit(x_train, y_train)
+    end = time.time()
 
     if debug:
         predicted = clf.predict_proba(x_test)[::, 1]

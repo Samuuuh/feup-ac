@@ -20,6 +20,7 @@ def log_regression(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) -> 
     log_reg = LogisticRegression()
     log_reg.fit(x, y)
 
+    end = time.time()
     print(f"Time elapsed: {end - start}")
     # Apply training
     if debug:

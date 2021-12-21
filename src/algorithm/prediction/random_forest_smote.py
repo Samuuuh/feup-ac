@@ -11,9 +11,10 @@ from .utils import get_x, get_y, save_result
 def random_forest_smote(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) -> None:
     start = time.time()
 
-    df_dev.sort_values(['loan_date'])
-    df_dev = df_dev.drop(columns=['loan_date'])
-    df_comp = df_comp.drop(columns=['loan_date'])
+    if 'loan_date' in df_dev:
+        df_dev.sort_values(['loan_date'])
+        df_dev = df_dev.drop(columns=['loan_date'])
+        df_comp = df_comp.drop(columns=['loan_date'])
 
     x = get_x(df_dev)
     y = get_y(df_dev)
@@ -29,6 +30,8 @@ def random_forest_smote(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool
     predicted = clf.predict_proba(x_test)[::, 1]
     expected = y_test
     score = roc_auc_score(expected, predicted)
+
+    end = time.time()
     print(f"score {score}")
     print(f"Time elapsed: {end - start}")
 

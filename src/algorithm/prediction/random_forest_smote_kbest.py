@@ -11,7 +11,7 @@ from sklearn.feature_selection import SelectKBest, f_classif
 
 # Robust against outliers.
 # Highly correlated variables may distort te random forest.
-def random_forest_smote_kbest(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) -> None:
+def random_forest_smote_kbest(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool, apply_grid: bool) -> None:
     start = time.time()
 
     n_estimators  = [100, 300, 500, 800, 1200]
@@ -32,10 +32,11 @@ def random_forest_smote_kbest(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug
     x_res = k_best.fit_transform(x_res, y_res)
 
     # Uncoment to train again.
-    clf = RandomForestClassifier()
-    clf = GridSearchCV(clf, hyperF, cv = 3, verbose = 1, n_jobs = -1)
-    clf.fit(x_res, y_res)
-    save_model(clf, "random_forest_kbest_grid_smote")
+    if apply_grid:
+        clf = RandomForestClassifier()
+        clf = GridSearchCV(clf, hyperF, cv = 3, verbose = 1, n_jobs = -1)
+        clf.fit(x_res, y_res)
+        save_model(clf, "random_forest_kbest_grid_smote")
 
     clf: GridSearchCV = read_model("random_forest_kbest_grid_smote")
 
@@ -47,6 +48,7 @@ def random_forest_smote_kbest(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug
     predicted = clf.predict_proba(x_test)[::, 1]
     expected = y_test
 
+    end = time.time()
     print(f"score {roc_auc_score(expected.values, predicted)}")
     print(f"Time elapsed: {end - start}")
     print_feature_importance(clf.best_estimator_.feature_importances_, x_train.columns[(cols)])
