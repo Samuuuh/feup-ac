@@ -10,6 +10,7 @@ from ..__main__ import build, convert_status
 from .k_means import k_means
 from .affinity import affinity
 from .k_means_tunning import k_means_tunning
+from .agglomerative_clustering import agglomerative_clustering
 
 import sqlite3
 
@@ -25,7 +26,8 @@ if __name__ == '__main__':
         parser.read(filepath)                       # Get's the config file.
         df = build(parser)                          # Builds the dataframe.
         df[0] = convert_status(df[0])
-        affinity(df)
-        #k_means_tunning(df)
+        # affinity(df)
+        # k_means_tunning(df)
+        agglomerative_clustering(df)
     else:
         Logger.print_err("No config parser in this folder.")

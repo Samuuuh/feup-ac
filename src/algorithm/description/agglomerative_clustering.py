@@ -5,7 +5,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from sklearn.cluster import AgglomerativeClustering
 
 def agglomerative_clustering(df: pd.DataFrame) -> None:
-    df = df[0].loc[:,["amount","min_balance","payments"]]
+    df = df[0].loc[:,["amount","min_balance","birthnumber"]]
 
     clustering = AgglomerativeClustering().fit(df)
     all_predictions = clustering.labels_
@@ -17,7 +17,7 @@ def agglomerative_clustering(df: pd.DataFrame) -> None:
     ax.scatter(
         X.amount,
         X.min_balance,
-        X.payments,
+        X.birthnumber,
         c=all_predictions,
         cmap=plt.cm.Set1,
         edgecolor="k",
@@ -28,7 +28,7 @@ def agglomerative_clustering(df: pd.DataFrame) -> None:
     ax.w_xaxis.set_ticklabels([])
     ax.set_ylabel("Min Balance")
     ax.w_yaxis.set_ticklabels([])
-    ax.set_zlabel("Type Sanction")
+    ax.set_zlabel("Birthnumber")
     ax.w_zaxis.set_ticklabels([])
 
     plt.show()
