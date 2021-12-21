@@ -17,10 +17,10 @@ def grid_log_regression(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool
 
     # Train the model
     x = get_x(train)
-    y = get_y(train) 
+    y = get_y(train)
 
-    # Other types of validation. three-fold-validation, for example. 
-    log_reg = LogisticRegression()
+    # Other types of validation. three-fold-validation, for example.
+    log_reg = LogisticRegression(max_iter=2500)
     cross_validation = KFold()
     parameter_grid={"C": np.logspace(-3,-3, 7), "penalty": ["l2"]}
     grid_search = GridSearchCV(
@@ -38,6 +38,6 @@ def grid_log_regression(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool
     end = time.time()
     print(f"Time elapsed: {end - start}")
 
-    if not debug: 
-        pred_competition = grid_search.predict_proba(get_x(df_comp))   
+    if not debug:
+        pred_competition = grid_search.predict_proba(get_x(df_comp))
         save_result(df_comp['loan_id'], pred_competition[::, 1], 'grid_log_reg')
