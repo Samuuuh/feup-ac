@@ -19,7 +19,7 @@ def tree_classifier(df_dev: pd.DataFrame, df_comp: pd.DataFrame, debug: bool) ->
 
     log_reg = DecisionTreeClassifier(max_depth=4)
     log_reg.fit(x, y)
-
+    end = time.time()
     # Apply training
     if debug:
         predicted = log_reg.predict_proba(get_x(test))[::, 1]
