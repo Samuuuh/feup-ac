@@ -65,7 +65,7 @@ def k_means_tunning(df: pd.DataFrame) -> None:
     ax.w_xaxis.set_ticklabels([])
     ax.set_ylabel("Min Balance")
     ax.w_yaxis.set_ticklabels([])
-    ax.set_zlabel("Birthnumber")
+    ax.set_zlabel("Birth year")
     ax.w_zaxis.set_ticklabels([])
     plt.show()
 

@@ -7,9 +7,9 @@ from sklearn.metrics import silhouette_score
 from kneed import KneeLocator
 
 def agglomerative_clustering(df: pd.DataFrame) -> None:
-    cluster_train = df[0].loc[:,["birthdate_year","min_balance","amount"]]
+    cluster_train = df[0].loc[:,["amount","min_balance", "birthdate_year"]]
 
-    clustering = AgglomerativeClustering(n_clusters=100).fit(cluster_train)
+    clustering = AgglomerativeClustering(n_clusters=3).fit(cluster_train)
     all_predictions = clustering.labels_
 
     X = cluster_train
@@ -30,11 +30,11 @@ def agglomerative_clustering(df: pd.DataFrame) -> None:
         s=40,
     )
     ax.set_title("First three PCA directions")
-    ax.set_xlabel("Birthnumber")
+    ax.set_xlabel("Amount")
     ax.w_xaxis.set_ticklabels([])
     ax.set_ylabel("Min Balance")
     ax.w_yaxis.set_ticklabels([])
-    ax.set_zlabel("Mean Balance")
+    ax.set_zlabel("Birthyear")
     ax.w_zaxis.set_ticklabels([])
 
     plt.show()

@@ -35,11 +35,11 @@ def affinity(df: pd.DataFrame) -> None:
     )
 
     ax.set_title("First three PCA directions")
-    ax.set_xlabel("Birthnumber")
+    ax.set_xlabel("Amount")
     ax.w_xaxis.set_ticklabels([])
     ax.set_ylabel("Min Balance")
     ax.w_yaxis.set_ticklabels([])
-    ax.set_zlabel("Mean Balance")
+    ax.set_zlabel("Birth year")
     ax.w_zaxis.set_ticklabels([])
 
     plt.show()
